@@ -22,7 +22,13 @@ const MUTATION_UPDATE_MESSAGE = 'MUTATION_UPDATE_MESSAGE';
 const MUTATION_SET_STATE_MESSAGE = 'MUTATION_SET_STATE_MESSAGE';
 const MUTATION_UPDATE_STATE_REQUEST = 'MUTATION_UPDATE_STATE_REQUEST';
 
-export default new Vuex.Store({
+const RequestNotificationSystem = {
+  ACTION_SEND_REQUEST,
+  ACTION_REQUEST_DONE,
+  ACTION_REQUEST_ERROR
+}
+
+const Store =  new Vuex.Store({
   state: () => {
       return {
         isShowMessage: false,
@@ -83,3 +89,5 @@ export default new Vuex.Store({
     Points
   }
 })
+
+export {Store, RequestNotificationSystem}

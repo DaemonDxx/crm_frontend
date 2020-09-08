@@ -1,4 +1,5 @@
 import {http} from '../../HttpClient'
+import {RequestNotificationSystem} from "@/store/index";
 
 const ACTION_LOGIN = 'ACTION_LOGIN';
 const ACTION_RESET_STATUS = 'ACTION_RESET_STATUS';
@@ -35,6 +36,7 @@ const Auth = {
     actions: {
         async [ACTION_LOGIN]({commit}, {username, password, isRememberMe}) {
             try {
+                commit(RequestNotificationSystem.ACTION_SEND_REQUEST);
                 commit(MUTATION_REQUEST_START);
                 const response = await http.post('/auth/login', {username, password});
                 if (response.status == 201) {
@@ -42,15 +44,20 @@ const Auth = {
                         localStorage.jwt = response.data.access_token;
                     }
                     http.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`
+                    commit(RequestNotificationSystem.ACTION_REQUEST_DONE, 'Вход выполнен успешно');
                     commit(MUTATION_REQUEST_DONE);
                     commit(MUTATION_IS_AUTH_TRUE);
                     commit(MUTATION_SET_USER, response.data.user);
                     return true;
                 } else {
-                    throw new Error('Неверный логин или пароль');
+                    let textMessage = '';
+                    switch (response.status) {
+                        case 404: textMessage = ''; break;
+                    }
+                    commit(RequestNotificationSystem.ACTION_REQUEST_ERROR, textMessage);
                 }
             } catch ({message}) {
-                ErrorHandler(commit, message);
+                commit(RequestNotificationSystem.ACTION_REQUEST_ERROR, message);
             }
 
         },
