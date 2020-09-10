@@ -1,5 +1,5 @@
 import {http} from '../../HttpClient'
-import {RequestNotificationSystem} from "@/store/index";
+import {ALARM_SYSTEM_ACTIONS} from "@/store/alarmSystem";
 
 const ACTION_LOGIN = 'ACTION_LOGIN';
 const ACTION_RESET_STATUS = 'ACTION_RESET_STATUS';
@@ -34,19 +34,16 @@ const Auth = {
         }
     },
     actions: {
-        async [ACTION_LOGIN]({commit}, {username, password, isRememberMe}) {
+        async [ACTION_LOGIN]({commit, dispatch}, {username, password, isRememberMe}) {
             try {
-                commit(RequestNotificationSystem.ACTION_SEND_REQUEST);
-                commit(MUTATION_REQUEST_START);
+                dispatch(ALARM_SYSTEM_ACTIONS.ACTION_SEND_REQUEST, null, {root: true});
                 const response = await http.post('/auth/login', {username, password});
                 if (response.status == 201) {
                     if (isRememberMe) {
                         localStorage.jwt = response.data.access_token;
                     }
                     http.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`
-                    commit(RequestNotificationSystem.ACTION_REQUEST_DONE, 'Вход выполнен успешно');
-                    commit(MUTATION_REQUEST_DONE);
-                    commit(MUTATION_IS_AUTH_TRUE);
+                    commit(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_DONE, 'Вход выполнен успешно', {root: true});
                     commit(MUTATION_SET_USER, response.data.user);
                     return true;
                 } else {
@@ -54,10 +51,10 @@ const Auth = {
                     switch (response.status) {
                         case 401: textMessage = 'Неверный логин или пароль'; break;
                     }
-                    commit(RequestNotificationSystem.ACTION_REQUEST_ERROR, textMessage);
+                    dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_ERROR, textMessage, {root: true});
                 }
             } catch ({message}) {
-                commit(RequestNotificationSystem.ACTION_REQUEST_ERROR, message);
+                dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_ERROR, message);
             }
 
         },

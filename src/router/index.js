@@ -7,7 +7,7 @@ import MainLayout from "@/layouts/MainLayout";
 import Job from "@/views/MainLayout/Job";
 import Dashboard from "@/views/MainLayout/Dashboard";
 
-import {Store} from '../store'
+import store from '../store'
 import Upload from "@/views/MainLayout/Upload";
 
 Vue.use(VueRouter)
@@ -23,7 +23,7 @@ Vue.use(VueRouter)
             name: 'login',
             component: Login,
             beforeEnter: (to, from ,next)  => {
-                if (Store.state.Auth.isAuth) {
+                if (store.state.Auth.isAuth) {
                     next('/dashboard');
                 } else {
                     next();
@@ -35,7 +35,7 @@ Vue.use(VueRouter)
             name: 'signup',
             component: SignUp,
             beforeEnter: (to, from ,next)  => {
-                if (Store.state.Auth.isAuth) {
+                if (store.state.Auth.isAuth) {
                     next('/dashboard');
                 } else {
                     next();
@@ -62,7 +62,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-        if (Store.state.Auth.isAuth) {
+        if (store.state.Auth.isAuth) {
             if (!(to.name === 'login' || to.name=== 'signup')) {
                 next();
             } else {
