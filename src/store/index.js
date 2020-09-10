@@ -7,9 +7,9 @@ import {Points} from "@/store/points";
 Vue.use(Vuex)
 
 const TYPE_MESSAGE = {
-  DONE: 'DONE',
-  ERROR: 'ERROR',
-  WARM: 'WARM'
+  DONE: 'success',
+  ERROR: 'error',
+  WARM: 'info'
 }
 
 const ACTION_SHOW_MESSAGE = 'ACTION_SHOW_MESSAGE';
@@ -30,12 +30,12 @@ const RequestNotificationSystem = {
 
 const Store =  new Vuex.Store({
   state: () => {
-      return {
-        isShowMessage: false,
-        textMessage: '',
-        typeMessage: '',
-        isSendingRequest: false
-      }
+    return {
+      isShowMessage: false,
+      textMessage: '',
+      typeMessage: '',
+      isSendingRequest: false
+    }
   },
   mutations: {
     [MUTATION_SET_STATE_MESSAGE] (state, isShowMessage) {

@@ -1,8 +1,20 @@
 <template>
   <v-app>
     <router-view/>
+    <v-snackbar app :value="isShowMessage" :text="textMessage" :color="typeMessage"></v-snackbar>
   </v-app>
 </template>
+
+<script>
+//import {mapGetters} from "vuex";
+
+export default {
+  name: 'app',
+  computed: {
+    //...mapGetters(['isShowMessage', 'textMessage', 'typeMessage'])
+  }
+}
+</script>
 
 <style lang="scss">
 #app {

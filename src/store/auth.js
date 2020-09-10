@@ -52,7 +52,7 @@ const Auth = {
                 } else {
                     let textMessage = '';
                     switch (response.status) {
-                        case 404: textMessage = ''; break;
+                        case 401: textMessage = 'Неверный логин или пароль'; break;
                     }
                     commit(RequestNotificationSystem.ACTION_REQUEST_ERROR, textMessage);
                 }
