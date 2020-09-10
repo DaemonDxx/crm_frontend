@@ -43,7 +43,7 @@ const Auth = {
                         localStorage.jwt = response.data.access_token;
                     }
                     http.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`
-                    commit(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_DONE, 'Вход выполнен успешно', {root: true});
+                    dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_DONE, 'Вход выполнен успешно', {root: true});
                     commit(MUTATION_SET_USER, response.data.user);
                     return true;
                 } else {
