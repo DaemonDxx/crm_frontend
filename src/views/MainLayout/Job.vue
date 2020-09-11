@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import {ACTION_UPDATE} from '../../store/points'
+import {ACTION_UPDATE_POINTS} from '../../store/points'
 import {mapActions, mapGetters} from "vuex";
 import {mdiMinus, mdiPhone, mdiAt, mdiEmail, mdiBellOff} from '@mdi/js';
 
@@ -117,9 +117,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions([ACTION_UPDATE]),
+    ...mapActions([ACTION_UPDATE_POINTS]),
     update: async function (date) {
-      await this[ACTION_UPDATE](date);
+      await this[ACTION_UPDATE_POINTS](date);
     },
     getIcon: function (notify) {
       if (notify) {
@@ -134,7 +134,7 @@ export default {
     }
   },
   async created() {
-    await this[ACTION_UPDATE](this.date);
+    await this[ACTION_UPDATE_POINTS](this.date);
   },
   computed: {
     ...mapGetters(['points', 'areas']),

@@ -9,7 +9,7 @@
       <v-text-field v-model="thirdName" outlined label="Отчество" type="text"></v-text-field>
       <v-select v-model="position" :items="positions"  outlined label="Должность"></v-select>
       <v-text-field v-model="invite" outlined label="Инвайт" type="text"></v-text-field>
-      <v-btn :disabled="isPasswordRepeatError" type="submit" block class="mb-3">Зарегистрироваться</v-btn>
+      <v-btn :loading="isSendingRequest" :disabled="isPasswordRepeatError" type="submit" block class="mb-3">Зарегистрироваться</v-btn>
     </v-form>
   </v-card-text>
 </template>
@@ -39,7 +39,7 @@ export default {
     ]),
 
     signup: async  function () {
-        await this.ACTION_SIGNUP({
+        const result = await this.ACTION_SIGNUP({
             firstName: this.firstName,
             lastName: this.lastName,
             thirdName: this.thirdName,
@@ -48,6 +48,9 @@ export default {
             position: this.positionID(this.position),
             invite: this.invite
         });
+        if (result) {
+          await this.$router.push('/login');
+        }
     },
 
 
@@ -56,7 +59,8 @@ export default {
   computed: {
     ...mapGetters([
         'positions',
-        'positionID'
+        'positionID',
+        'isSendingRequest'
     ]),
     isPasswordRepeatError: function () {
       return this.password !== this.repeatPassword;

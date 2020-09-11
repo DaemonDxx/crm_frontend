@@ -8,20 +8,11 @@ const ACTION_POSITIONS = 'ACTION_POSITIONS';
 const ACTION_LOGOUT = 'ACTION_LOGOUT';
 const ACTION_USER = 'ACTION_USER';
 
-const MUTATION_REQUEST_START = 'MUTATION_REQUEST_START';
-const MUTATION_REQUEST_ERROR = 'MUTATION_REQUEST_ERROR';
-const MUTATION_REQUEST_DONE = 'MUTATION_REQUEST_DONE';
-const MUTATION_RESET = 'MUTATION_RESET';
 const MUTATION_SET_POSITIONS = 'MUTATION_SET_POSITIONS';
 const MUTATION_LOGOUT = 'MUTATION_LOGOUT';
-const MUTATION_IS_AUTH_TRUE = 'MUTATION_IS_AUTH_TRUE';
 const MUTATION_SET_USER = 'MUTATION_SET_USER';
 
-function ErrorHandler(commit, message) {
-    commit(MUTATION_REQUEST_ERROR, message);
-    setTimeout(function () {commit(MUTATION_RESET)}, 3000);
-    return false;
-}
+
 
 const Auth = {
     state: () => {
@@ -43,7 +34,6 @@ const Auth = {
                         localStorage.jwt = response.data.access_token;
                     }
                     http.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`
-                    dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_DONE, 'Вход выполнен успешно', {root: true});
                     commit(MUTATION_SET_USER, response.data.user);
                     return true;
                 } else {
@@ -58,28 +48,32 @@ const Auth = {
             }
 
         },
-        async [ACTION_SIGNUP] ({commit}, payload) {
+        async [ACTION_SIGNUP] ({dispatch}, payload) {
             try {
-                commit(MUTATION_REQUEST_START);
+                dispatch(ALARM_SYSTEM_ACTIONS.ACTION_SEND_REQUEST);
                 const response = await http.post('/auth/signup', payload);
                 if (response.status === 200) {
-                    commit(MUTATION_REQUEST_DONE);
+                    dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_DONE, 'Вы успешно зарегистрированы');
                     return true;
                 }
-                commit(MUTATION_REQUEST_ERROR, response.data.message);
+                dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_ERROR, response.data.message);
                 return false;
             } catch ({message}) {
-                ErrorHandler(commit, message);
+                dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_ERROR, message);
             }
         },
-        async [ACTION_POSITIONS] ({commit}) {
+        async [ACTION_POSITIONS] ({commit, dispatch}) {
             try {
                 const response = await http.get('/user/positions');
-                const positions = await response.data;
-                commit(MUTATION_SET_POSITIONS, positions);
-                return true;
+                if (response.status == 200) {
+                    const positions = await response.data;
+                    commit(MUTATION_SET_POSITIONS, positions);
+                    return true;
+                }
+                dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_ERROR, response.data.message);
+                return false;
             } catch ({message}) {
-                ErrorHandler(commit, message);
+                dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_ERROR, message);
             }
         },
         async [ACTION_USER] ({commit}) {
@@ -97,27 +91,9 @@ const Auth = {
 
     },
     mutations: {
-        [MUTATION_REQUEST_START] (state) {
-            state.errorMessage = '';
-            state.status = 'send';
-        },
-        [MUTATION_REQUEST_ERROR] (state, message) {
-            state.status = 'error';
-            state.errorMessage = message;
-        },
-        [MUTATION_REQUEST_DONE] (state) {
-            state.status = 'done';
-        },
-        [MUTATION_RESET] (state) {
-            state.status = '';
-            state.errorMessage = '';
-        },
         [MUTATION_SET_POSITIONS] (state, positions) {state.positions = positions},
         [MUTATION_LOGOUT] (state) {
             state.isAuth = false;
-        },
-        [MUTATION_IS_AUTH_TRUE] (state) {
-            state.isAuth = true;
         },
         [MUTATION_SET_USER] (state, user) {
             state.user = user;
@@ -125,8 +101,6 @@ const Auth = {
     },
     getters: {
         isAuth: state => state.isAuth,
-        authStatus: state => state.status,
-        authErrorMessage: state => state.errorMessage,
         positions: state => state.positions.map(item => item.description),
         positionID: state => description => {
             let id;
