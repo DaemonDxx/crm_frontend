@@ -6,8 +6,7 @@
           outlined
           label="Логин"
           type="text"
-          :error=!!authErrorMessage
-          :success="success"
+          :error=error
       ></v-text-field>
 
       <v-text-field
@@ -15,9 +14,7 @@
           class="mb-n4"
           outlined
           label="Пароль"
-          :error=!!authErrorMessage
-          :error-messages=authErrorMessage
-          :success="success"
+          :error=error
           type="password"
       ></v-text-field>
 
@@ -39,7 +36,7 @@
             color="accent"
             class="mb-1"
             type="submit"
-            :loading="authStatus==='send'"
+            :loading=isSendingRequest
         >Войти</v-btn>
 
       </v-card-actions>
@@ -57,28 +54,25 @@ export default {
       rememberMe: true,
       username: '',
       password: '',
-      success: false
+      error: false
     }
   },
   methods: {
     login: async function () {
       let result = await this.ACTION_LOGIN({username: this.username, password: this.password, isRememberMe: this.rememberMe});
       if (result) {
-        this.success = true;
-        setTimeout(function () {
-          this.$router.push('/');
-          }.bind(this), 1500);
+        await this.$router.push('/');
+      } else {
+        this.error = true;
       }
     },
     ...mapActions([
         ACTION_LOGIN
     ]),
   },
+
   computed: {
-    ...mapGetters([
-        'authStatus',
-        'authErrorMessage'
-    ])
+    ...mapGetters(['isSendingRequest'])
   },
   name: "LoginView"
 }

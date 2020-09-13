@@ -88,8 +88,11 @@
 </template>
 
 <script>
-import {ACTION_UPDATE} from '../../store/points'
+
 import {ACTION_USER_IN_DEPARTMENT} from "@/store/auth";
+
+import {ACTION_UPDATE_POINTS} from '../../store/points'
+
 import {mapActions, mapGetters} from "vuex";
 import {mdiMinus, mdiPhone, mdiAt, mdiEmail, mdiBellOff} from '@mdi/js';
 
@@ -119,9 +122,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions([ACTION_UPDATE, ACTION_USER_IN_DEPARTMENT]),
+    ...mapActions([ACTION_UPDATE_POINTS]),
+
     update: async function (date) {
-      await this[ACTION_UPDATE](date);
+      await this[ACTION_UPDATE_POINTS](date);
     },
     getIcon: function (notify) {
       if (notify) {
@@ -144,8 +148,7 @@ export default {
     ...mapGetters(['points', 'areas', 'usersInDepartment', "oneNamePointsInDay"]),
   },
   async created() {
-    await this[ACTION_UPDATE](this.date);
-    await this[ACTION_USER_IN_DEPARTMENT]();
+    await this[ACTION_UPDATE_POINTS](this.date);
   },
   name: "Job"
 }

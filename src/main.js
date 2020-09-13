@@ -7,7 +7,7 @@ import store from './store'
 
 
 Vue.config.productionTip = false
-console.log(store);
+
 new Vue({
   vuetify,
   router,

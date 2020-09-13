@@ -1,6 +1,7 @@
 import {http} from "../../HttpClient";
+import {ALARM_SYSTEM_ACTIONS} from "@/store/alarmSystem";
 
-const ACTION_UPDATE = 'ACTION_UPDATE';
+const ACTION_UPDATE_POINTS = 'ACTION_UPDATE_POINTS';
 
 const MUTATION_UPDATE = 'MUTATION_UPDATE';
 
@@ -12,14 +13,15 @@ const Points = {
         }
     },
     actions: {
-        async [ACTION_UPDATE] ({commit}, date) {
+        async [ACTION_UPDATE_POINTS] ({commit, dispatch}, date) {
             try {
                 const res = await http(`/point/day?date=${date}`);
                 if (res.status === 200) {
                     commit(MUTATION_UPDATE, res.data);
                 }
-            } catch (e) {
-                console.log(e.message);
+                dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_ERROR, res.data.message);
+            } catch ({message}) {
+                dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_ERROR, message);
             }
 
         }
@@ -36,4 +38,4 @@ const Points = {
     }
 }
 
-export {Points, ACTION_UPDATE}
+export {Points, ACTION_UPDATE_POINTS}
