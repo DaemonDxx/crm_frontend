@@ -39,9 +39,9 @@
 
         <v-col cols="4">
           <v-card min-height="300px">
-              <v-select class="pl-4 pr-4 pt-4"  outlined label="Выдающий задание"></v-select>
-              <v-select class="pl-4 pr-4 pt-4 mb-n4" outlined label="Член бригады"></v-select>
-              <v-select class="pl-4 pr-4 pt-4" outlined label="Член бригады"></v-select>
+              <v-select :items="usersInDepartment" class="pl-4 pr-4 pt-4"  outlined label="Выдающий задание"></v-select>
+              <v-select :items="usersInDepartment" class="pl-4 pr-4 pt-4 mb-n4" outlined label="Член бригады"></v-select>
+              <v-select :items="usersInDepartment" class="pl-4 pr-4 pt-4" outlined label="Член бригады"></v-select>
           </v-card>
         </v-col>
         <v-spacer></v-spacer>
@@ -73,7 +73,7 @@
 
         <template v-slot:item.notification="props">
           <td class="align-center">
-            <v-btn icon>
+            <v-btn icon @click="test(props.item)">
               <v-icon  color="success" v-if="props.value">{{getIcon(props.value)}}</v-icon>
               <v-icon color="error" v-else>{{getIcon(props.value)}}</v-icon>
             </v-btn>
@@ -83,11 +83,13 @@
 
       </v-data-table>
     </v-card>
+
   </v-container>
 </template>
 
 <script>
 import {ACTION_UPDATE} from '../../store/points'
+import {ACTION_USER_IN_DEPARTMENT} from "@/store/auth";
 import {mapActions, mapGetters} from "vuex";
 import {mdiMinus, mdiPhone, mdiAt, mdiEmail, mdiBellOff} from '@mdi/js';
 
@@ -117,7 +119,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions([ACTION_UPDATE]),
+    ...mapActions([ACTION_UPDATE, ACTION_USER_IN_DEPARTMENT]),
     update: async function (date) {
       await this[ACTION_UPDATE](date);
     },
@@ -131,13 +133,19 @@ export default {
       } else {
         return this.icon.mdiBellOff
       }
+    },
+    test: function (i,a) {
+      console.log(i);
+      console.log(this.oneNamePointsInDay(i.name))
+      console.log(a);
     }
+  },
+  computed: {
+    ...mapGetters(['points', 'areas', 'usersInDepartment', "oneNamePointsInDay"]),
   },
   async created() {
     await this[ACTION_UPDATE](this.date);
-  },
-  computed: {
-    ...mapGetters(['points', 'areas']),
+    await this[ACTION_USER_IN_DEPARTMENT]();
   },
   name: "Job"
 }

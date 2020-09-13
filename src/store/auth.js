@@ -6,6 +6,7 @@ const ACTION_SIGNUP = 'ACTION_SIGNUP';
 const ACTION_POSITIONS = 'ACTION_POSITIONS';
 const ACTION_LOGOUT = 'ACTION_LOGOUT';
 const ACTION_USER = 'ACTION_USER';
+const ACTION_USER_IN_DEPARTMENT = 'ACTION_USER_IN_DEPARTMENT'
 
 const MUTATION_REQUEST_START = 'MUTATION_REQUEST_START';
 const MUTATION_REQUEST_ERROR = 'MUTATION_REQUEST_ERROR';
@@ -15,6 +16,7 @@ const MUTATION_SET_POSITIONS = 'MUTATION_SET_POSITIONS';
 const MUTATION_LOGOUT = 'MUTATION_LOGOUT';
 const MUTATION_IS_AUTH_TRUE = 'MUTATION_IS_AUTH_TRUE';
 const MUTATION_SET_USER = 'MUTATION_SET_USER';
+const MUTATION_USER_IN_DEPARTMENT = 'MUTATION_USER_IN_DEPARTMENT';
 
 function ErrorHandler(commit, message) {
     commit(MUTATION_REQUEST_ERROR, message);
@@ -29,7 +31,8 @@ const Auth = {
             errorMessage: '',
             status: '',
             positions: [],
-            user: {}
+            user: {},
+            usersInDepartment: []
         }
     },
     actions: {
@@ -83,6 +86,10 @@ const Auth = {
             commit(MUTATION_SET_USER, response.data);
             return true;
         },
+        async [ACTION_USER_IN_DEPARTMENT] ({commit}) {
+            const users = await http('/user/department');
+            commit(MUTATION_USER_IN_DEPARTMENT, users.data);
+        },
         [ACTION_RESET_STATUS] ({commit}) {
             commit('resetStatus');
         },
@@ -117,6 +124,9 @@ const Auth = {
         },
         [MUTATION_SET_USER] (state, user) {
             state.user = user;
+        },
+        [MUTATION_USER_IN_DEPARTMENT] (state, users) {
+            state.usersInDepartment = users;
         }
     },
     getters: {
@@ -133,8 +143,9 @@ const Auth = {
             });
             return id;
         },
-        user: state => state.user
+        user: state => state.user,
+        usersInDepartment: state => state.usersInDepartment.map((item => String(item.lastName+' '+item.firstName+' '+item.thirdName)))
     }
 }
 
-export {Auth, ACTION_LOGIN, ACTION_POSITIONS, ACTION_RESET_STATUS, ACTION_SIGNUP, ACTION_LOGOUT, ACTION_USER}
+export {Auth, ACTION_LOGIN, ACTION_POSITIONS, ACTION_RESET_STATUS, ACTION_SIGNUP, ACTION_LOGOUT, ACTION_USER, ACTION_USER_IN_DEPARTMENT}
