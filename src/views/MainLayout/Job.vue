@@ -122,11 +122,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions([ACTION_UPDATE_POINTS]),
+    ...mapActions([ACTION_UPDATE_POINTS, ACTION_USER_IN_DEPARTMENT]),
 
     update: async function (date) {
       await this[ACTION_UPDATE_POINTS](date);
     },
+
     getIcon: function (notify) {
       if (notify) {
         switch (notify.type) {
@@ -149,6 +150,7 @@ export default {
   },
   async created() {
     await this[ACTION_UPDATE_POINTS](this.date);
+    await this[ACTION_USER_IN_DEPARTMENT]();
   },
   name: "Job"
 }

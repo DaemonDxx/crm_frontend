@@ -19,7 +19,6 @@ const Points = {
                 if (res.status === 200) {
                     commit(MUTATION_UPDATE, res.data);
                 }
-                dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_ERROR, res.data.message);
             } catch ({message}) {
                 dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_ERROR, message);
             }
