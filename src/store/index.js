@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import {Auth} from "@/store/auth";
 import {File} from "@/store/file";
 import {Points} from "@/store/points";
-
+import {Notification} from "@/store/notification";
 import {AlarmSystem} from "@/store/alarmSystem";
 
 Vue.use(Vuex)
@@ -15,6 +15,7 @@ export default  new Vuex.Store({
     Auth,
     File,
     Points,
-    AlarmSystem
+    AlarmSystem,
+    Notification
   }
 })

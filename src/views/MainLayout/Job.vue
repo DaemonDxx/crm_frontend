@@ -73,7 +73,7 @@
 
         <template v-slot:item.notification="props">
           <td class="align-center">
-            <v-btn icon @click="test(props.item)">
+            <v-btn icon @click="openDialog(props.item)">
               <v-icon  color="success" v-if="props.value">{{getIcon(props.value)}}</v-icon>
               <v-icon color="error" v-else>{{getIcon(props.value)}}</v-icon>
             </v-btn>
@@ -83,6 +83,8 @@
 
       </v-data-table>
     </v-card>
+    <NotificationModal :isShow="isShowDialog">
+    </NotificationModal>
 
   </v-container>
 </template>
@@ -90,13 +92,15 @@
 <script>
 
 import {ACTION_USER_IN_DEPARTMENT} from "@/store/auth";
-
+import {ACTION_SHOW_DIALOG} from "@/store/notification";
 import {ACTION_UPDATE_POINTS} from '../../store/points'
 
 import {mapActions, mapGetters} from "vuex";
 import {mdiMinus, mdiPhone, mdiAt, mdiEmail, mdiBellOff} from '@mdi/js';
+import NotificationModal from "@/views/MainLayout/NotificationModal";
 
 export default {
+  components: {NotificationModal},
   data: () => {
     return {
       icon: {
@@ -122,7 +126,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions([ACTION_UPDATE_POINTS, ACTION_USER_IN_DEPARTMENT]),
+    ...mapActions([ACTION_UPDATE_POINTS, ACTION_USER_IN_DEPARTMENT, ACTION_SHOW_DIALOG]),
 
     update: async function (date) {
       await this[ACTION_UPDATE_POINTS](date);
@@ -139,14 +143,12 @@ export default {
         return this.icon.mdiBellOff
       }
     },
-    test: function (i,a) {
-      console.log(i);
-      console.log(this.oneNamePointsInDay(i.name))
-      console.log(a);
+    openDialog(point) {
+      this.ACTION_SHOW_DIALOG(point);
     }
   },
   computed: {
-    ...mapGetters(['points', 'areas', 'usersInDepartment', "oneNamePointsInDay"]),
+    ...mapGetters(['points', 'areas', 'usersInDepartment', "oneNamePointsInDay", 'isShowDialog']),
   },
   async created() {
     await this[ACTION_UPDATE_POINTS](this.date);

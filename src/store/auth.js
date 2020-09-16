@@ -34,10 +34,7 @@ const Auth = {
                 dispatch(ALARM_SYSTEM_ACTIONS.ACTION_SEND_REQUEST, null, {root: true});
                 const response = await http.post('/auth/login', {username, password});
                 if (response.status == 201) {
-                    if (isRememberMe) {
-                        commit(MUTATION_LOGIN, response.data.access_token);
-                    }
-                    http.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`
+                    commit(MUTATION_LOGIN, {token: response.data.access_token, isRemember: isRememberMe});
                     commit(MUTATION_SET_USER, response.data.user);
                     return true;
                 } else {
@@ -109,9 +106,13 @@ const Auth = {
         [MUTATION_USER_IN_DEPARTMENT] (state, users) {
             state.usersInDepartment = users;
         },
-        [MUTATION_LOGIN] (state, jwt) {
+        [MUTATION_LOGIN] (state, {token, isRemember}) {
             state.isAuth = true;
-            localStorage.jwt = jwt;
+            http.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            console.log(http.defaults.headers);
+            if (isRemember) {
+                localStorage.jwt = token;
+            }
         }
     },
     getters: {
