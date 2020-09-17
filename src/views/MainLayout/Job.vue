@@ -92,7 +92,7 @@
 <script>
 
 import {ACTION_USER_IN_DEPARTMENT} from "@/store/auth";
-import {ACTION_SHOW_DIALOG} from "@/store/notification";
+import {ACTION_SHOW_DIALOG, ACTION_GET_NOTIFICATION} from "@/store/notification";
 import {ACTION_UPDATE_POINTS} from '../../store/points'
 
 import {mapActions, mapGetters} from "vuex";
@@ -126,7 +126,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions([ACTION_UPDATE_POINTS, ACTION_USER_IN_DEPARTMENT, ACTION_SHOW_DIALOG]),
+    ...mapActions([ACTION_UPDATE_POINTS, ACTION_USER_IN_DEPARTMENT, ACTION_SHOW_DIALOG, ACTION_GET_NOTIFICATION]),
 
     update: async function (date) {
       await this[ACTION_UPDATE_POINTS](date);
@@ -143,8 +143,9 @@ export default {
         return this.icon.mdiBellOff
       }
     },
-    openDialog(point) {
+    async openDialog(point) {
       this.ACTION_SHOW_DIALOG(point);
+      await this.ACTION_GET_NOTIFICATION();
     }
   },
   computed: {

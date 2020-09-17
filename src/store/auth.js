@@ -24,7 +24,7 @@ const Auth = {
             errorMessage: '',
             status: '',
             positions: [],
-            user: {},
+            user: {department: {shortName: ''},position: {description: ''}},
             usersInDepartment: []
         }
     },

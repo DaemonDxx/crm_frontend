@@ -14,17 +14,17 @@ const MUTATION_UPDATE_NOTIFICATION = 'MUTATION_UPDATE_NOTIFICATION';
 const MUTATION_SHOW_DIALOG = 'MUTATION_SHOW_DIALOG';
 const MUTATION_HIDE_DIALOG = 'MUTATION_HIDE_DIALOG';
 const MUTATION_UPDATE_SET_POINTS = 'MUTATION_UPDATE_SET_POINTS';
-
+const MUTATION_SET_NUMBER = 'MUTATION_SET_NUMBER';
 
 
 const Notification = {
     state: () => {
         return {
             notification: {
-
+                number: '',
             },
-            points: [],
-            isShowDialog: false,
+            points: [{phone: ['']}],
+            isShowDialog: true,
         }
     },
     actions: {
@@ -51,11 +51,10 @@ const Notification = {
         [ACTION_HIDE_DIALOG] ({commit}) {
             commit(MUTATION_HIDE_DIALOG);
         },
-        async [ACTION_GET_NEXT_NUMBER] ({commit, state}) {
+        async [ACTION_GET_NEXT_NUMBER] ({commit}) {
             const result = await http('/notification/number');
             if (result.status === 200) {
-                const newNotify = Object.assign(state.currentNotification, {number: result.data});
-                commit(MUTATION_UPDATE_NOTIFICATION, newNotify);
+                commit(MUTATION_SET_NUMBER, result.data);
             }
         },
         [ACTION_SET_CURRENT_POINTS] ({commit}, points) {
@@ -66,16 +65,19 @@ const Notification = {
         [MUTATION_UPDATE_NOTIFICATION] (state, notification) {
             state.notification = notification;
         },
+        [MUTATION_SET_NUMBER] (state, number) {
+          state.notification.number = number;
+        },
         [MUTATION_UPDATE_SET_POINTS] (state, points) {
-            state.currentPoints = points;
+            state.points = points;
         },
         [MUTATION_SHOW_DIALOG] (state, point) {
             state.isShowDialog = true;
             state.points = [point]
         },
         [MUTATION_HIDE_DIALOG] (state) {
-            state.points = [];
-            state.notification = {};
+            state.points = [{phone: ['']}];
+            state.notification = {number: ''};
             state.isShowDialog = false;
         }
     },
@@ -83,6 +85,8 @@ const Notification = {
         currentPointNotification: state => state.currentPoints,
         notification: state => state.notification,
         isShowDialog: state => state.isShowDialog,
+        number: state => state.notification.number,
+        notifyPoints: state => state.points,
     }
 }
 
