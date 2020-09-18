@@ -13,18 +13,30 @@
               <span class="white--text"> Уведомление </span>
             </v-list-item-title>
             <v-list-item-subtitle class="white--text text-start">
-              От {{new Date()|dateFilter}}
+              От {{new Date()|dateFilter}} &#160;
+              <span
+                  v-if="notification.time && notification.type === 'phone'">
+                {{notification.time}}
+              </span>
+              <v-btn
+                  v-if="!notification.time && notification.type === 'phone'"
+                  class="white--text text-decoration-underline"
+                  text
+                  small
+                  @click="saveTime">
+                Зафиксировать время
+              </v-btn>
             </v-list-item-subtitle>
           </v-list-item-content>
-          <v-list-item-action @click="getNumber" v-if="!number">
+          <v-list-item-action @click="getNumber" v-if="!notification.number">
             <a class="white--text text-decoration-underline">Получить номер</a>
           </v-list-item-action>
           <v-list-item-action class="white--text" v-else>
-            <span class="white--text text-h4">{{prefix}}-{{number}}</span>
+            <span class="white--text text-h4">{{prefix}}-{{notification.number}}</span>
           </v-list-item-action>
         </v-list-item>
 
-        <v-item-group v-model="type" class="ma-5">
+        <v-item-group v-model="type" class="ma-5" mandatory>
           <v-row dense>
             <v-col v-for="item in typesNotify" :key="item.value" cols="4">
               <v-item :value="item.value" v-slot:default="{active, toggle}">
@@ -35,6 +47,8 @@
             </v-col>
           </v-row>
         </v-item-group>
+
+        <v-divider class="mt-2 mb-2"></v-divider>
 
           <v-list-item>
             <v-list-item-content two-line>
@@ -47,41 +61,60 @@
             </v-list-item-content>
           </v-list-item>
 
-        <v-list-item v-if="type === 'phone'">
-          <v-list-item-content two-line>
-            <v-list-item-title class="text-start">
-              <v-text-field label="Принял"></v-text-field>
-            </v-list-item-title>
-            <v-list-item-subtitle class="text-start">
-              <v-combobox
-                  v-model="phone"
-                  :items="notifyPoints[0].phone"
-              >
+        <v-divider class="mt-2 mb-2"></v-divider>
 
-              </v-combobox>
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
+        <v-row no-gutters v-if="notification.type === 'phone'">
+          <v-col class="pl-4 pr-4" cols="8">
+            <v-text-field v-model="to" label="Принял"></v-text-field>
+          </v-col>
+          <v-col class="pr-4" cols="4">
+            <v-combobox
+                label="Телефон"
+                v-model="phone"
+                :items="notification.points[0].phone"
+            >
+            </v-combobox>
+          </v-col>
+        </v-row>
 
-        <v-sheet>
-          <span class="text-start">Руководителю: {{notifyPoints[0].name}}</span>
-        </v-sheet>
+        <v-row no-gutters v-if="notification.type === 'email'">
+          <v-col cols="12" class="pl-4 pr-4">
+            <v-combobox
+                label="Email потрбителя"
+              multiple
+              chips
+              :items="notification.points[0].email"
+            >
+
+            </v-combobox>
+          </v-col>
+        </v-row>
+
+            <v-card-subtitle style="font-size: 16px" class="text-start text--primary ">
+                Руководителю: {{notification.points[0].name}}
+            </v-card-subtitle>
+
+
+        <v-divider class="mt-2 mb-2"></v-divider>
 
 
 
 
         <v-data-table
-            class="mr-4 ml-4"
+            class="mr-4 ml-4 mt-6 mb-6"
             hide-default-footer
             item-key="_id"
-            :items="notifyPoints"
-            :headers="[
-            {text: 'Адрес', value: 'address',sortable: false, },
-            {text: 'Номер прибора учета', value: 'numberDevice', sortable: false},
-            {text: 'Дата проверки', value: 'dateCheck', sortable: true}]">
+            :items="notification.points"
+            :headers="headersForTable">
+
+          <template v-slot:item.dateCheck="{item}">
+            <td>
+              {{new Date(item.dateCheck)|dateFilter}}
+            </td>
+          </template>
         </v-data-table>
 
-        <v-item-group class="mb-3" v-model="typePlan">
+        <v-item-group class="mb-3" v-model="typePlan" mandatory>
           <v-item class="mr-3" value="planned" v-slot:default="{active, toggle}">
             <v-chip :color="active?'primary':''" @click="toggle" :class="{'text--white': active}">
               Плановая проверка
@@ -92,9 +125,9 @@
               Внеплановая проверка
             </v-chip>
           </v-item>
-        </v-item-group>
+        </v-item-group >
 
-        <v-textarea class="pl-4 pr-4" outlined label="Примечание" rows="2">
+        <v-textarea v-model="description" class="pl-4 pr-4" outlined label="Примечание" rows="2">
         </v-textarea>
 
         <v-btn @click="closeDialog">Закрыть</v-btn>
@@ -105,6 +138,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import {ACTION_HIDE_DIALOG, ACTION_GET_NOTIFICATION, ACTION_GET_NEXT_NUMBER} from "@/store/notification";
 import {mapActions, mapGetters} from "vuex";
 import getMonthName from '../../MonthParser'
@@ -112,14 +146,11 @@ import getMonthName from '../../MonthParser'
 export default {
   data: () => {
     return {
-      type: 'phone',
-      phone: '',
-      email: '',
-      to: '',
-      time: '',
-      status: '',
-      description: '',
-      typePlan: 'planned',
+      headersForTable: [
+        {text: 'Дата проверки', value: 'dateCheck', sortable: true},
+        {text: 'Адрес', value: 'address', sortable: true},
+        {text: 'Номер прибора учета', value: 'numberDevice', sortable: false},
+      ],
       typesNotify: [
         {value: 'phone' , text: 'Телефонограмма'},
         {value: 'email', text: 'Email'},
@@ -133,10 +164,54 @@ export default {
     },
     getNumber() {
       this.ACTION_GET_NEXT_NUMBER();
+    },
+    saveTime() {
+      const time = moment().format('HH:mm')
+      this.$store.commit('MUTATION_UPDATE_FIELD', {newValue: time, field: 'time'});
     }
   },
   computed: {
-    ...mapGetters(['number','user', 'notifyPoints']),
+    ...mapGetters(['notification', 'user']),
+    to: {
+      get: function () {
+        return this.$store.state.Notification.notification.to;
+      },
+      set: function (newValue) {
+        this.$store.commit('MUTATION_UPDATE_FIELD', {newValue, field: 'to'});
+      }
+    },
+    type: {
+      get: function () {
+        return this.$store.state.Notification.notification.type;
+      },
+      set: function (newValue) {
+        this.$store.commit('MUTATION_UPDATE_FIELD', {newValue, field: 'type'});
+      }
+    },
+    typePlan: {
+      get: function () {
+        return this.$store.state.Notification.notification.typePlan;
+      },
+      set: function (newValue) {
+        this.$store.commit('MUTATION_UPDATE_FIELD', {newValue, field: 'typePlan'});
+      }
+    },
+    phone: {
+      get: function () {
+        return this.$store.state.Notification.notification.phone;
+      },
+      set: function (newValue) {
+        this.$store.commit('MUTATION_UPDATE_FIELD', {newValue, field: 'phone'});
+      }
+    },
+    description: {
+      get: function () {
+        return this.$store.state.Notification.notification.description;
+      },
+      set: function (newValue) {
+        this.$store.commit('MUTATION_UPDATE_FIELD', {newValue, field: 'description'});
+      }
+    },
     prefix: function () {
       switch (this.type) {
         case "phone": return 'Т';

@@ -15,15 +15,23 @@ const MUTATION_SHOW_DIALOG = 'MUTATION_SHOW_DIALOG';
 const MUTATION_HIDE_DIALOG = 'MUTATION_HIDE_DIALOG';
 const MUTATION_UPDATE_SET_POINTS = 'MUTATION_UPDATE_SET_POINTS';
 const MUTATION_SET_NUMBER = 'MUTATION_SET_NUMBER';
-
+const MUTATION_UPDATE_FIELD = 'MUTATION_UPDATE_FIELD';
 
 const Notification = {
     state: () => {
         return {
             notification: {
                 number: '',
+                type: 'phone',
+                phone: '',
+                email: '',
+                to: '',
+                time: '',
+                status: '',
+                description: '',
+                typePlan: 'planned',
+                points: [{phone: ['']}],
             },
-            points: [{phone: ['']}],
             isShowDialog: true,
         }
     },
@@ -65,28 +73,37 @@ const Notification = {
         [MUTATION_UPDATE_NOTIFICATION] (state, notification) {
             state.notification = notification;
         },
+        [MUTATION_UPDATE_FIELD] (state, {newValue, field}) {
+            state.notification[field] = newValue;
+        },
         [MUTATION_SET_NUMBER] (state, number) {
           state.notification.number = number;
         },
         [MUTATION_UPDATE_SET_POINTS] (state, points) {
-            state.points = points;
+            state.notification.points = points;
         },
         [MUTATION_SHOW_DIALOG] (state, point) {
             state.isShowDialog = true;
             state.points = [point]
         },
         [MUTATION_HIDE_DIALOG] (state) {
-            state.points = [{phone: ['']}];
-            state.notification = {number: ''};
+            state.notification = {
+                number: '',
+                type: 'phone',
+                phone: '',
+                email: '',
+                to: '',
+                time: '',
+                status: '',
+                description: '',
+                typePlan: 'planned',
+                points: [{phone: ['']}],};
             state.isShowDialog = false;
         }
     },
     getters: {
-        currentPointNotification: state => state.currentPoints,
         notification: state => state.notification,
         isShowDialog: state => state.isShowDialog,
-        number: state => state.notification.number,
-        notifyPoints: state => state.points,
     }
 }
 
