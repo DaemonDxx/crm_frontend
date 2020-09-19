@@ -56,7 +56,7 @@
           <v-list-item>
             <v-list-item-content two-line>
               <v-list-item-title class="text-start">
-                Передал: &#160; {{user.position.description}}&#160; {{user.department.shortName}}&#160; {{user|userFIO}}
+                {{from}}
               </v-list-item-title>
               <v-list-item-subtitle class="text-start">
                 Телефон: 256-56-26 &#160;Email: i79535999238@gmail.com
@@ -133,7 +133,20 @@
 
         <v-btn @click="saveNotify">Сохранить</v-btn>
         <v-btn @click="closeDialog">Закрыть</v-btn>
+
+        <v-sheet v-if="error.length >0">
+          <v-list-item
+              v-for="item in error"
+              :key="item"
+          >
+            <v-list-item-subtitle class="error--text text-start">
+              {{item}}
+            </v-list-item-subtitle>
+          </v-list-item>
+        </v-sheet>
+
       </v-card>
+
     </v-dialog>
 </template>
 
@@ -159,13 +172,16 @@ export default {
         {value: 'planed', text: 'Плановая проверка'},
         {value: 'unPlaned', text: 'Внеплановая проверка'}
       ],
+      error: []
 
     }
   },
   methods: {
     ...mapActions([ACTION_HIDE_DIALOG, ACTION_GET_NOTIFICATION, ACTION_GET_NEXT_NUMBER, ACTION_SEND_NOTIFICATION]),
     closeDialog() {
+      this.error = [];
       this.ACTION_HIDE_DIALOG();
+
     },
     getNumber() {
       this.ACTION_GET_NEXT_NUMBER();
@@ -175,8 +191,34 @@ export default {
       this.$store.commit('MUTATION_UPDATE_FIELD', {newValue: time, field: 'time'});
     },
     async saveNotify() {
-      await this.ACTION_SEND_NOTIFICATION();
-      this.$emit('closeDialog', {needUpdate: true});
+      this.error = [];
+      if (!this.notification.number) {
+        this.error.push('Не задан номер уведомления');
+      }
+      if (this.notification.type === 'phone') {
+        if (!this.notification.to) {
+          this.error.push('Не указано, кто принял телефонограмму');
+        }
+        if (!this.notification.phone) {
+          this.error.push('Не указан номер телефона');
+        }
+        if (!this.notification.time) {
+          this.error.push('Не указано время передачи телефонограммы');
+        }
+      }
+      if (this.notification.type === 'email') {
+        if (!this.notification.email) {
+          this.error.push('Не укан Email, на который будет отправлено уведомление');
+        }
+      }
+
+      if (this.error.length >0) {
+        return
+      } else {
+        await this.ACTION_SEND_NOTIFICATION();
+        this.$emit('closeDialog', {needUpdate: true});
+      }
+
     }
   },
   computed: {
@@ -236,20 +278,29 @@ export default {
         case "letter": return 'П';
         default: return '';
        }
+    },
+    from: function() {
+      if (this.notification.from) {
+        return `Передал: ${this.notification.from.position.description} ${this.notification.from.department.shortName} ${UserFIOFilter(this.notification.from)}`;
+      } else {
+        return `Передал:  ${this.user.position.description} ${this.user.department.shortName} ${UserFIOFilter(this.user)}`;
+      }
     }
   },
   filters: {
-    userFIO: function (value) {
-      if (value.lastName) {
-        return `${value.lastName} ${value.firstName.split('')[0]}. ${value.thirdName.split('')[0]}.`
-      }
-    },
+    userFIO: UserFIOFilter,
     dateFilter: function (date) {
       return `${date.getDate()} ${getMonthName(date.getMonth())} ${date.getFullYear()}`;
     },
   },
   props: ['isShow'],
   name: "NotificationModal",
+}
+
+function UserFIOFilter (value) {
+  if (value.lastName) {
+    return `${value.lastName} ${value.firstName.split('')[0]}. ${value.thirdName.split('')[0]}.`
+  }
 }
 </script>
 
