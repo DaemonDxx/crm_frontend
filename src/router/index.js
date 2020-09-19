@@ -9,6 +9,7 @@ import Dashboard from "@/views/MainLayout/Dashboard";
 
 import store from '../store'
 import Upload from "@/views/MainLayout/Upload";
+import NotifyJornal from "@/views/MainLayout/NotifyJornal";
 
 Vue.use(VueRouter)
 
@@ -51,7 +52,8 @@ Vue.use(VueRouter)
       children: [
           {path: 'job', component: Job},
           {path: 'dashboard', component: Dashboard},
-          {path: 'upload', component:  Upload}
+          {path: 'upload', component:  Upload},
+          {path: 'notification', component: NotifyJornal}
       ]
     }
 ]

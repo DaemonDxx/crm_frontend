@@ -75,7 +75,7 @@
           <td class="align-center">
             <v-btn icon @click="openDialog(props.item)">
               <v-icon  color="success" v-if="props.value">{{getIcon(props.value)}}</v-icon>
-              <v-icon color="error" v-else>{{getIcon(props.value)}}</v-icon>
+              <v-icon v-else>{{getIcon(props.value)}}</v-icon>
             </v-btn>
           </td>
         </template>
@@ -83,7 +83,7 @@
 
       </v-data-table>
     </v-card>
-    <NotificationModal :isShow="isShowDialog">
+    <NotificationModal :isShow="isShowDialog" @closeDialog="closedDialog">
     </NotificationModal>
 
   </v-container>
@@ -146,6 +146,11 @@ export default {
     async openDialog(point) {
       this.ACTION_SHOW_DIALOG(point);
       await this.ACTION_GET_NOTIFICATION();
+    },
+    async closedDialog(e) {
+      if (e.needUpdate) {
+        await this[ACTION_UPDATE_POINTS](this.date);
+      }
     }
   },
   computed: {

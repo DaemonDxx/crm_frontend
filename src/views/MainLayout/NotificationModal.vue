@@ -1,10 +1,9 @@
 <template>
-  <v-row>
     <v-dialog
+
         :value="isShow"
         persistent
         max-width="600px">
-      <v-form>
       <v-card>
 
         <v-list-item class="primary">
@@ -20,7 +19,7 @@
               </span>
               <v-btn
                   v-if="!notification.time && notification.type === 'phone'"
-                  class="white--text text-decoration-underline"
+                  class="white--text text-decoration-underline mb-1"
                   text
                   small
                   @click="saveTime">
@@ -36,7 +35,11 @@
           </v-list-item-action>
         </v-list-item>
 
-        <v-item-group v-model="type" class="ma-5" mandatory>
+        <v-item-group
+            v-model="type"
+            class="ma-5"
+            mandatory
+        >
           <v-row dense>
             <v-col v-for="item in typesNotify" :key="item.value" cols="4">
               <v-item :value="item.value" v-slot:default="{active, toggle}">
@@ -65,10 +68,11 @@
 
         <v-row no-gutters v-if="notification.type === 'phone'">
           <v-col class="pl-4 pr-4" cols="8">
-            <v-text-field v-model="to" label="Принял"></v-text-field>
+            <v-text-field :readonly="!isEditable" v-model="to" label="Принял"></v-text-field>
           </v-col>
           <v-col class="pr-4" cols="4">
             <v-combobox
+                :readonly="!isEditable"
                 label="Телефон"
                 v-model="phone"
                 :items="notification.points[0].phone"
@@ -80,10 +84,13 @@
         <v-row no-gutters v-if="notification.type === 'email'">
           <v-col cols="12" class="pl-4 pr-4">
             <v-combobox
+                :readonly="!isEditable"
                 label="Email потрбителя"
-              multiple
-              chips
-              :items="notification.points[0].email"
+                multiple
+                chips
+                v-model="email"
+                :items="notification.points[0].email"
+
             >
 
             </v-combobox>
@@ -96,9 +103,6 @@
 
 
         <v-divider class="mt-2 mb-2"></v-divider>
-
-
-
 
         <v-data-table
             class="mr-4 ml-4 mt-6 mb-6"
@@ -115,31 +119,27 @@
         </v-data-table>
 
         <v-item-group class="mb-3" v-model="typePlan" mandatory>
-          <v-item class="mr-3" value="planned" v-slot:default="{active, toggle}">
+          <v-item v-for="item in typesPlaned" :key="item.value" :value="item.value" v-slot:default="{active, toggle}" class="mr-2 ml-2" >
             <v-chip :color="active?'primary':''" @click="toggle" :class="{'text--white': active}">
-              Плановая проверка
-            </v-chip>
-          </v-item>
-          <v-item value="unPlanned" v-slot:default="{active, toggle}">
-            <v-chip :color="active?'primary':''" @click="toggle" :class="{'text--white': active}">
-              Внеплановая проверка
+              {{item.text}}
             </v-chip>
           </v-item>
         </v-item-group >
 
+
+
         <v-textarea v-model="description" class="pl-4 pr-4" outlined label="Примечание" rows="2">
         </v-textarea>
 
+        <v-btn @click="saveNotify">Сохранить</v-btn>
         <v-btn @click="closeDialog">Закрыть</v-btn>
       </v-card>
-      </v-form>
     </v-dialog>
-  </v-row>
 </template>
 
 <script>
 import moment from 'moment'
-import {ACTION_HIDE_DIALOG, ACTION_GET_NOTIFICATION, ACTION_GET_NEXT_NUMBER} from "@/store/notification";
+import {ACTION_HIDE_DIALOG, ACTION_GET_NOTIFICATION, ACTION_GET_NEXT_NUMBER, ACTION_SEND_NOTIFICATION} from "@/store/notification";
 import {mapActions, mapGetters} from "vuex";
 import getMonthName from '../../MonthParser'
 
@@ -154,11 +154,16 @@ export default {
       typesNotify: [
         {value: 'phone' , text: 'Телефонограмма'},
         {value: 'email', text: 'Email'},
-        {value: 'letter', text: 'Письмо'}]
+        {value: 'letter', text: 'Письмо'}],
+      typesPlaned: [
+        {value: 'planed', text: 'Плановая проверка'},
+        {value: 'unPlaned', text: 'Внеплановая проверка'}
+      ],
+
     }
   },
   methods: {
-    ...mapActions([ACTION_HIDE_DIALOG, ACTION_GET_NOTIFICATION, ACTION_GET_NEXT_NUMBER]),
+    ...mapActions([ACTION_HIDE_DIALOG, ACTION_GET_NOTIFICATION, ACTION_GET_NEXT_NUMBER, ACTION_SEND_NOTIFICATION]),
     closeDialog() {
       this.ACTION_HIDE_DIALOG();
     },
@@ -168,10 +173,14 @@ export default {
     saveTime() {
       const time = moment().format('HH:mm')
       this.$store.commit('MUTATION_UPDATE_FIELD', {newValue: time, field: 'time'});
+    },
+    async saveNotify() {
+      await this.ACTION_SEND_NOTIFICATION();
+      this.$emit('closeDialog', {needUpdate: true});
     }
   },
   computed: {
-    ...mapGetters(['notification', 'user']),
+    ...mapGetters(['notification', 'user', "isEditable"]),
     to: {
       get: function () {
         return this.$store.state.Notification.notification.to;
@@ -210,6 +219,14 @@ export default {
       },
       set: function (newValue) {
         this.$store.commit('MUTATION_UPDATE_FIELD', {newValue, field: 'description'});
+      }
+    },
+    email: {
+      get: function () {
+        return this.$store.state.Notification.notification.email;
+      },
+      set: function (newValue) {
+        this.$store.commit('MUTATION_UPDATE_FIELD', {newValue, field: 'email'});
       }
     },
     prefix: function () {

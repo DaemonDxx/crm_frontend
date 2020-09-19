@@ -1,12 +1,9 @@
 
 import {http} from "../../HttpClient";
 
-
-const ACTION_UPDATE_NOTIFICATION = 'ACTION_UPDATE_NOTIFICATION';
+const ACTION_SEND_NOTIFICATION = 'ACTION_SEND_NOTIFICATION';
 const ACTION_GET_NEXT_NUMBER ='ACTION_GET_NEXT_NUMBER';
 const ACTION_SHOW_DIALOG = 'ACTION_SHOW_DIALOG';
-const ACTION_SET_CURRENT_POINTS = 'ACTION_SET_CURRENT_POINTS';
-const ACTION_SEND_NOTIFICATION = 'ACTION_SEND_NOTIFICATION';
 const ACTION_HIDE_DIALOG = 'ACTION_HIDE_DIALOG';
 const ACTION_GET_NOTIFICATION = 'ACTION_GET_NOTIFICATION';
 
@@ -32,6 +29,7 @@ const Notification = {
                 typePlan: 'planned',
                 points: [{phone: ['']}],
             },
+            isEditable: true,
             isShowDialog: true,
         }
     },
@@ -40,17 +38,16 @@ const Notification = {
             let res = await http('/notification', {params: {pointID: state.points[0]._id}});
             if (res.data.notification) {
                 commit(MUTATION_UPDATE_NOTIFICATION,res.data.notification);
-                commit(MUTATION_UPDATE_SET_POINTS, res.data.notification.points);
             } else {
                 res = await http('/point', {params: {name: state.points[0].name}});
                 commit(MUTATION_UPDATE_SET_POINTS, res.data.points);
             }
 
         },
-        async [ACTION_UPDATE_NOTIFICATION] ({commit, state}) {
-            const result = await http.post('/notification', state.currentNotification);
+        async [ACTION_SEND_NOTIFICATION] ({commit, state}) {
+            const result = await http.post('/notification', state.notification);
             if (result.status === 201) {
-                commit(MUTATION_UPDATE_NOTIFICATION, result.data);
+                commit(MUTATION_HIDE_DIALOG);
             }
         },
         [ACTION_SHOW_DIALOG] ({commit}, point) {
@@ -64,14 +61,12 @@ const Notification = {
             if (result.status === 200) {
                 commit(MUTATION_SET_NUMBER, result.data);
             }
-        },
-        [ACTION_SET_CURRENT_POINTS] ({commit}, points) {
-            commit(MUTATION_UPDATE_SET_POINTS, points);
         }
     },
     mutations: {
         [MUTATION_UPDATE_NOTIFICATION] (state, notification) {
             state.notification = notification;
+            state.isEditable = false;
         },
         [MUTATION_UPDATE_FIELD] (state, {newValue, field}) {
             state.notification[field] = newValue;
@@ -81,6 +76,7 @@ const Notification = {
         },
         [MUTATION_UPDATE_SET_POINTS] (state, points) {
             state.notification.points = points;
+            state.isEditable = true;
         },
         [MUTATION_SHOW_DIALOG] (state, point) {
             state.isShowDialog = true;
@@ -104,7 +100,8 @@ const Notification = {
     getters: {
         notification: state => state.notification,
         isShowDialog: state => state.isShowDialog,
+        isEditable: state => state.isEditable,
     }
 }
 
-export {Notification, ACTION_GET_NEXT_NUMBER, ACTION_SET_CURRENT_POINTS, ACTION_SHOW_DIALOG, ACTION_UPDATE_NOTIFICATION, ACTION_SEND_NOTIFICATION, ACTION_GET_NOTIFICATION, ACTION_HIDE_DIALOG}
+export {Notification, ACTION_GET_NEXT_NUMBER, ACTION_SHOW_DIALOG, ACTION_SEND_NOTIFICATION, ACTION_GET_NOTIFICATION, ACTION_HIDE_DIALOG}

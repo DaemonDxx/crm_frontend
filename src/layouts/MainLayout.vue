@@ -119,6 +119,7 @@ export default {
   },
   name: "MainLayout"
 }
+
 </script>
 
 <style scoped>
