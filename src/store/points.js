@@ -33,7 +33,6 @@ const Points = {
     getters: {
         points: state => areas => state.points.filter(item => areas.includes(item.area)),
         areas: state => Array.from(new Set(state.points.map(item => item.area))),
-        oneNamePointsInDay: state => pointName => state.points.filter(item => item.name === pointName)
     }
 }
 

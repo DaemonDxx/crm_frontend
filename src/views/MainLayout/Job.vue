@@ -1,35 +1,32 @@
 <template>
   <v-container fluid>
-      <v-row>
-        <v-col>
-          <v-card min-height="300px" max-width="300px">
-            <v-list dense>
-              <v-list-item-title>
+      <v-row class="align-stretch">
+
+        <v-col xs="12" sm="6" md="3">
+          <v-card height="100%">
+              <v-list-item-title class="pt-3 font-weight-bold">
                 РЭС
               </v-list-item-title>
-              <v-list-item
-                  v-for="a in areas"
-                  :key="a"
-              >
-                <v-list-item-action>
-                  <v-checkbox dense class="text-start"
-                      :label="a"
-                      :value="a"
-                      v-model="selectAreas">
-                  </v-checkbox>
-                </v-list-item-action>
+            <v-sheet  v-for="a in areas" :key="a">
 
-              </v-list-item>
-            </v-list>
+                <v-checkbox
+                    dense
+                    class="text-start mb-n6 ml-6"
+                    :label="a"
+                    :value="a"
+                    v-model="selectAreas">
+                </v-checkbox>
+            </v-sheet>
+
           </v-card>
         </v-col>
 
-        <v-col>
-          <v-card  max-width="300px" min-height="300px">
+        <v-col xs="12" sm="6" md="3">
+          <v-card class="d-flex align-center justify-center"   >
           <v-date-picker
               first-day-of-week="1"
               no-title
-              v-model="date"
+              v-model="task.date"
               locale="ru-latn"
               @change="update"
               landscape>
@@ -37,11 +34,59 @@
           </v-card>
         </v-col>
 
-        <v-col cols="4">
-          <v-card min-height="300px">
-              <v-select :items="usersInDepartment" class="pl-4 pr-4 pt-4"  outlined label="Выдающий задание"></v-select>
-              <v-select :items="usersInDepartment" class="pl-4 pr-4 pt-4 mb-n4" outlined label="Член бригады"></v-select>
-              <v-select :items="usersInDepartment" class="pl-4 pr-4 pt-4" outlined label="Член бригады"></v-select>
+        <v-col xs="12" sm="6" md="3">
+          <v-card height="100%">
+              <v-select
+                  v-model="task.head"
+                  :items="usersInDepartment"
+                  class="pl-4 pr-4 pt-4"
+                  outlined
+                  label="Выдающий задание"
+                  :item-text="getFullname"
+                  return-object
+              >
+              </v-select>
+              <v-select
+                  v-model="task.members"
+                  :items="usersInDepartment"
+                  class="pl-4 pr-4 mb-n4"
+                  outlined
+                  multiple
+                  label="Члены бригады"
+                  :item-text="getFullname"
+                  return-object
+              >
+              </v-select>
+          </v-card>
+        </v-col>
+
+        <v-col xs="12" sm="6" md="3">
+          <v-card height="100%" class="d-flex flex-column justify-space-around">
+            <v-card-title>
+              Задание №{{task.number}}
+            </v-card-title>
+            <v-card-text class="ma-0 ">
+              <v-checkbox
+                  class="mb-n6"
+                v-for="item in paramsJob"
+                :key="item.name"
+                :label="item.description"
+                :value="item.name"
+              ></v-checkbox>
+            </v-card-text>
+            <v-card-actions>
+              <v-row>
+                <v-col cols="12">
+                  <v-btn
+                      color="primary"
+                      @click="sendTask"
+                      small
+                  >
+                    {{btnTextSendTask}}
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-card-actions>
           </v-card>
         </v-col>
         <v-spacer></v-spacer>
@@ -50,7 +95,7 @@
     <v-card>
       <v-data-table
           hide-default-footer
-          v-model="selectPoint"
+          v-model="task.points"
           item-key="_id"
           show-select
           :items-per-page="itemsPerPage"
@@ -72,7 +117,7 @@
         </template>
 
         <template v-slot:item.notification="props">
-          <td class="align-center">
+          <td class="d-flex justify-center">
             <v-btn icon @click="openDialog(props.item)">
               <v-icon  color="success" v-if="props.value">{{getIcon(props.value)}}</v-icon>
               <v-icon v-else>{{getIcon(props.value)}}</v-icon>
@@ -94,6 +139,7 @@
 import {ACTION_USER_IN_DEPARTMENT} from "@/store/auth";
 import {ACTION_SHOW_DIALOG, ACTION_GET_NOTIFICATION} from "@/store/notification";
 import {ACTION_UPDATE_POINTS} from '../../store/points'
+import {ACTION_GET_TASK, ACTION_SEND_TASK} from "@/store/Task";
 
 import {mapActions, mapGetters} from "vuex";
 import {mdiMinus, mdiPhone, mdiAt, mdiEmail, mdiBellOff} from '@mdi/js';
@@ -112,8 +158,6 @@ export default {
       },
       selectAreas: [],
       itemsPerPage: 40,
-      selectPoint: [],
-      date: new Date().toISOString().substr(0, 10),
       headers: [
         {text: 'РЭС', value: 'area', sortable: false, align: 'center'},
         {text: 'Потребитель', value: 'name', sortable: true},
@@ -122,14 +166,40 @@ export default {
         {text: 'Прибор', value: 'numberDevice', sortable: false},
         {text: 'Уведомление', value: 'notification', sortable: false, align: 'center'},
 
-      ]
+      ],
+      paramsJob: [
+        {name: 'map', description: 'Добавить карту'},
+        {name: 'volumes', description: 'Добавить объемы'},
+      ],
+      task: {
+        points: [],
+        head: {},
+        members: [],
+        date:  new Date().toISOString().substr(0, 10),
+      }
     }
   },
   methods: {
-    ...mapActions([ACTION_UPDATE_POINTS, ACTION_USER_IN_DEPARTMENT, ACTION_SHOW_DIALOG, ACTION_GET_NOTIFICATION]),
+    ...mapActions([ACTION_UPDATE_POINTS, ACTION_USER_IN_DEPARTMENT, ACTION_SHOW_DIALOG, ACTION_GET_NOTIFICATION, ACTION_SEND_TASK, ACTION_GET_TASK]),
 
+    getFullname(user) {
+      return `${user.lastName} ${user.firstName} ${user.thirdName}`
+    },
     update: async function (date) {
       await this[ACTION_UPDATE_POINTS](date);
+      const task = await this[ACTION_GET_TASK](date);
+      if (task) {
+        this.task = Object.assign(task, {date: this.task.date});
+      } else {
+        this.task = {
+          points: [],
+          head: {},
+          number: '',
+          members: [],
+          date:  date
+        }
+      }
+      this.selectAreas = this.areas;
     },
 
     getIcon: function (notify) {
@@ -149,15 +219,25 @@ export default {
     },
     async closedDialog(e) {
       if (e.needUpdate) {
-        await this[ACTION_UPDATE_POINTS](this.date);
+        await this[ACTION_UPDATE_POINTS](this.task.date);
       }
-    }
+    },
+    async sendTask() {
+      const task = await this.ACTION_SEND_TASK(this.task);
+      if (task) {
+        this.task.number = task.number;
+        this.task._id = task._id;
+      }
+    },
   },
   computed: {
-    ...mapGetters(['points', 'areas', 'usersInDepartment', "oneNamePointsInDay", 'isShowDialog']),
+    ...mapGetters(['points', 'areas', 'usersInDepartment', 'isShowDialog']),
+    btnTextSendTask: function () {
+      return this.task.number?'Обновить задание':'Получить задание'
+    }
   },
   async created() {
-    await this[ACTION_UPDATE_POINTS](this.date);
+    await this.update(this.task.date);
     await this[ACTION_USER_IN_DEPARTMENT]();
   },
   name: "Job"

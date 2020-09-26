@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid class="fill-height pa-0" >
     <v-navigation-drawer
 
         v-model="drawer"
@@ -33,18 +33,24 @@
     </v-navigation-drawer>
 
     <v-app-bar
+        color="primary"
         app>
-    <v-btn @click="drawer=!drawer" icon>
+    <v-btn
+        @click="drawer=!drawer" icon>
       <v-icon>{{mdiMenuOpen}}</v-icon>
     </v-btn>
-      <v-btn color="primary" @click="logout">
+      <v-spacer></v-spacer>
+      <v-btn
+          outlined
+          color="white"
+          @click="logout">
         Выйти
       </v-btn>
     </v-app-bar>
 
     <v-main
-        app
-        class="">
+        class="fill-height"
+        style="background-color: #EEEEEE">
       <router-view></router-view>
     </v-main>
   </v-container>
@@ -52,7 +58,7 @@
 
 <script>
 import {mapActions, mapGetters} from "vuex";
-import {mdiAccountCircle, mdiFormatListChecks, mdiMenuOpen, mdiPhone, mdiViewDashboardOutline, mdiCloudUploadOutline} from '@mdi/js';
+import {mdiAccountCircle, mdiFormatListChecks, mdiMenuOpen, mdiPhone, mdiViewDashboardOutline, mdiCloudUploadOutline,} from '@mdi/js';
 import {ACTION_LOGOUT, ACTION_USER} from '../store/auth';
 
 

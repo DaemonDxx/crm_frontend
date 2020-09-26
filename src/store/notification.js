@@ -30,7 +30,7 @@ const Notification = {
                 points: [{phone: ['']}],
             },
             isEditable: true,
-            isShowDialog: true,
+            isShowDialog: false,
         }
     },
     actions: {

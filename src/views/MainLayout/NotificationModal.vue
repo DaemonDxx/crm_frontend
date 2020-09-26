@@ -128,7 +128,14 @@
 
 
 
-        <v-textarea v-model="description" class="pl-4 pr-4" outlined label="Примечание" rows="2">
+        <v-textarea
+            v-model="description"
+            class="pl-4 pr-4"
+            outlined
+            label="Примечание"
+            rows="2"
+            :readonly="!isEditable"
+        >
         </v-textarea>
 
         <v-btn @click="saveNotify">Сохранить</v-btn>

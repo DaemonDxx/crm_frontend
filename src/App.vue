@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app light>
     <router-view/>
     <v-snackbar app :value="isShowMessage"  :color="typeMessage">
       {{textMessage}}

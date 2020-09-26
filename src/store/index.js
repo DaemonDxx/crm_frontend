@@ -5,6 +5,7 @@ import {File} from "@/store/file";
 import {Points} from "@/store/points";
 import {Notification} from "@/store/notification";
 import {AlarmSystem} from "@/store/alarmSystem";
+import {Task} from "@/store/Task";
 
 Vue.use(Vuex)
 
@@ -16,6 +17,7 @@ export default  new Vuex.Store({
     File,
     Points,
     AlarmSystem,
-    Notification
+    Notification,
+    Task
   }
 })

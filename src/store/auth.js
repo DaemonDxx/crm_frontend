@@ -128,7 +128,7 @@ const Auth = {
             return id;
         },
         user: state => state.user,
-        usersInDepartment: state => state.usersInDepartment.map((item => String(item.lastName+' '+item.firstName+' '+item.thirdName)))
+        usersInDepartment: state => state.usersInDepartment
     }
 }
 
