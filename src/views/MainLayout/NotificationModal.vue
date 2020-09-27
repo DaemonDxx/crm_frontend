@@ -126,6 +126,17 @@
           </v-item>
         </v-item-group >
 
+        <v-select
+            v-model="head"
+            :items="usersInDepartment"
+            :item-text="getFullname"
+            label="Ответсвенный"
+            class="mr-5 ml-5"
+            return-object
+            :readonly="!isEditable"
+        >
+
+        </v-select>
 
 
         <v-textarea
@@ -185,6 +196,9 @@ export default {
   },
   methods: {
     ...mapActions([ACTION_HIDE_DIALOG, ACTION_GET_NOTIFICATION, ACTION_GET_NEXT_NUMBER, ACTION_SEND_NOTIFICATION]),
+    getFullname(user) {
+      return `${user.lastName} ${user.firstName} ${user.thirdName}`
+    },
     closeDialog() {
       this.error = [];
       this.ACTION_HIDE_DIALOG();
@@ -229,7 +243,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['notification', 'user', "isEditable"]),
+    ...mapGetters(['notification', 'user', "isEditable",'usersInDepartment']),
     to: {
       get: function () {
         return this.$store.state.Notification.notification.to;
@@ -276,6 +290,14 @@ export default {
       },
       set: function (newValue) {
         this.$store.commit('MUTATION_UPDATE_FIELD', {newValue, field: 'email'});
+      }
+    },
+    head: {
+      get: function () {
+        return this.$store.state.Notification.notification.head;
+      },
+      set: function (newValue) {
+        this.$store.commit('MUTATION_UPDATE_FIELD', {newValue, field: 'head'});
       }
     },
     prefix: function () {

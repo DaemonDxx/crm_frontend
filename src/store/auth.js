@@ -16,7 +16,6 @@ const MUTATION_USER_IN_DEPARTMENT = 'MUTATION_USER_IN_DEPARTMENT';
 const MUTATION_LOGIN = 'MUTATION_LOGIN';
 
 
-
 const Auth = {
     state: () => {
         return  {
@@ -34,8 +33,10 @@ const Auth = {
                 dispatch(ALARM_SYSTEM_ACTIONS.ACTION_SEND_REQUEST, null, {root: true});
                 const response = await http.post('/auth/login', {username, password});
                 if (response.status == 201) {
-                    commit(MUTATION_LOGIN, {token: response.data.access_token, isRemember: isRememberMe});
+                    const token = response.data.access_token;
+                    commit(MUTATION_LOGIN, {token, isRemember: isRememberMe});
                     commit(MUTATION_SET_USER, response.data.user);
+                    dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_DONE, 'Вход выполнен успешно');
                     return true;
                 } else {
                     let textMessage = '';
@@ -99,16 +100,18 @@ const Auth = {
         [MUTATION_SET_POSITIONS] (state, positions) {state.positions = positions},
         [MUTATION_LOGOUT] (state) {
             state.isAuth = false;
+            state.user = {department: {shortName: ''},position: {description: ''}};
         },
         [MUTATION_SET_USER] (state, user) {
-            state.user = user;
+            state.user = Object.assign(user, {});
         },
         [MUTATION_USER_IN_DEPARTMENT] (state, users) {
             state.usersInDepartment = users;
         },
         [MUTATION_LOGIN] (state, {token, isRemember}) {
             state.isAuth = true;
-            http.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            const header = `Bearer `+ token;
+            http.defaults.headers['Authorization'] = header;
             console.log(http.defaults.headers);
             if (isRemember) {
                 localStorage.jwt = token;

@@ -27,6 +27,7 @@ const Notification = {
                 status: '',
                 description: '',
                 typePlan: 'planned',
+                head: '',
                 points: [{phone: ['']}],
             },
             isEditable: true,
@@ -92,6 +93,7 @@ const Notification = {
                 time: '',
                 status: '',
                 description: '',
+                head: '',
                 typePlan: 'planned',
                 points: [{phone: ['']}],};
             state.isShowDialog = false;

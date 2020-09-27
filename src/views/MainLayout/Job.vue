@@ -106,7 +106,7 @@
           >
 
         <template style="colspan: all" v-slot:group.header="props">
-            <td style="background-color: #F9FBE7" class="text-start" colspan="6">
+            <td bgcolor="#90CAF9" class="text-start" colspan="6">
               <v-btn class="mr-3" icon @click="props.toggle()">
                 <v-icon>
                   {{icon.mdiMinus}}

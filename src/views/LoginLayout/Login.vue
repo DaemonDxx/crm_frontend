@@ -60,6 +60,8 @@ export default {
   methods: {
     login: async function () {
       let result = await this.ACTION_LOGIN({username: this.username, password: this.password, isRememberMe: this.rememberMe});
+      this.username = '';
+      this.password = '';
       if (result) {
         await this.$router.push('/');
       } else {
