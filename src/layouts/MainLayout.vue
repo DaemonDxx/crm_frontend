@@ -92,6 +92,12 @@ export default {
           path: '/upload',
           icon: mdiCloudUploadOutline,
           needPermissions: []
+        },
+        {
+          title: 'Отчет по проверкам',
+          path: '/results-check',
+          icon: '',
+          needPermissions: []
         }
 
       ]

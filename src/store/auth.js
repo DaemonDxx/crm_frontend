@@ -33,8 +33,7 @@ const Auth = {
                 dispatch(ALARM_SYSTEM_ACTIONS.ACTION_SEND_REQUEST, null, {root: true});
                 const response = await http.post('/auth/login', {username, password});
                 if (response.status == 201) {
-                    const token = response.data.access_token;
-                    commit(MUTATION_LOGIN, {token, isRemember: isRememberMe});
+                    commit(MUTATION_LOGIN, {token: response.data.access_token, isRemember: isRememberMe});
                     commit(MUTATION_SET_USER, response.data.user);
                     dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_DONE, 'Вход выполнен успешно');
                     return true;
@@ -110,9 +109,7 @@ const Auth = {
         },
         [MUTATION_LOGIN] (state, {token, isRemember}) {
             state.isAuth = true;
-            const header = `Bearer `+ token;
-            http.defaults.headers['Authorization'] = header;
-            console.log(http.defaults.headers);
+            http.defaults.headers['Authorization'] = `Bearer ${token}`;
             if (isRemember) {
                 localStorage.jwt = token;
             }

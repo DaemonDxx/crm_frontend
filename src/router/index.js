@@ -10,6 +10,7 @@ import Dashboard from "@/views/MainLayout/Dashboard";
 import store from '../store'
 import Upload from "@/views/MainLayout/Upload";
 import NotifyJornal from "@/views/MainLayout/NotifyJornal";
+import ResultsCheck from "@/views/MainLayout/ResultCheck/ResultsCheck";
 
 Vue.use(VueRouter)
 
@@ -53,7 +54,8 @@ Vue.use(VueRouter)
           {path: 'job', component: Job},
           {path: 'dashboard', component: Dashboard},
           {path: 'upload', component:  Upload},
-          {path: 'notification', component: NotifyJornal}
+          {path: 'notification', component: NotifyJornal},
+          {path: 'results-check', component: ResultsCheck}
       ]
     }
 ]

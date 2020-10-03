@@ -55,7 +55,7 @@ const Task = {
         }
     },
     getters: {
-
+        currentTask: (state) => state.currentTask,
     }
 
 }
