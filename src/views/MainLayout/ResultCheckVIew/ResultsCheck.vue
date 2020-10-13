@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import PointResultCard from "@/views/MainLayout/ResultCheck/PointResultCard";
+import PointResultCard from "@/views/MainLayout/ResultCheckVIew/PointResultCard";
 import {mapActions} from "vuex";
 import {ACTION_GET_TASK} from "@/store/Task";
 export default {

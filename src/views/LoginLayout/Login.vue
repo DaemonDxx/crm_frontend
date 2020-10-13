@@ -36,7 +36,6 @@
             color="accent"
             class="mb-1"
             type="submit"
-            :loading=isSendingRequest
         >Войти</v-btn>
 
       </v-card-actions>
@@ -45,10 +44,12 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from "vuex";
+import {mapActions} from "vuex";
 import {ACTION_LOGIN} from '../../store/auth'
 
 export default {
+  name: "LoginView",
+
   data: () => {
     return {
       rememberMe: true,
@@ -57,10 +58,19 @@ export default {
       error: false
     }
   },
+
   methods: {
+
+    ...mapActions([
+      ACTION_LOGIN
+    ]),
+
     login: async function () {
-      let result = await this.ACTION_LOGIN({username: this.username, password: this.password, isRememberMe: this.rememberMe});
-      this.username = '';
+      let result = await this.ACTION_LOGIN({
+        username: this.username,
+        password: this.password,
+        isRememberMe: this.rememberMe
+      });
       this.password = '';
       if (result) {
         await this.$router.push('/');
@@ -68,15 +78,7 @@ export default {
         this.error = true;
       }
     },
-    ...mapActions([
-        ACTION_LOGIN
-    ]),
   },
-
-  computed: {
-    ...mapGetters(['isSendingRequest'])
-  },
-  name: "LoginView"
 }
 </script>
 

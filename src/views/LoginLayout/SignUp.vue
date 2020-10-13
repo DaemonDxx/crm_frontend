@@ -7,9 +7,15 @@
       <v-text-field v-model="lastName" outlined label="Фамилия" type="text"></v-text-field>
       <v-text-field v-model="firstName" outlined label="Имя" type="text"></v-text-field>
       <v-text-field v-model="thirdName" outlined label="Отчество" type="text"></v-text-field>
-      <v-select v-model="position" :items="positions"  outlined label="Должность"></v-select>
+      <v-select v-model="position"
+                :items="positions"
+                outlined
+                label="Должность"
+                item-text="description"
+                return-object
+      ></v-select>
       <v-text-field v-model="invite" outlined label="Инвайт" type="text"></v-text-field>
-      <v-btn :loading="isSendingRequest" :disabled="isPasswordRepeatError" type="submit" block class="mb-3">Зарегистрироваться</v-btn>
+      <v-btn :disabled="isPasswordRepeatError" type="submit" block class="mb-3">Зарегистрироваться</v-btn>
     </v-form>
   </v-card-text>
 </template>
@@ -45,7 +51,7 @@ export default {
             thirdName: this.thirdName,
             username: this.username,
             password: this.password,
-            position: this.positionID(this.position),
+            position: this.position,
             invite: this.invite
         });
         if (result) {
@@ -59,7 +65,6 @@ export default {
   computed: {
     ...mapGetters([
         'positions',
-        'positionID',
         'isSendingRequest'
     ]),
     isPasswordRepeatError: function () {

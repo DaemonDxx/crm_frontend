@@ -68,8 +68,8 @@
 </template>
 
 <script>
-import {TypeSResult} from "@/views/MainLayout/ResultCheck/TypesResult";
-import ExtraOptions from "@/views/MainLayout/ResultCheck/ExtraOptions/ExtraOptions";
+import {TypeSResult} from "@/views/MainLayout/ResultCheckVIew/TypesResult";
+import ExtraOptions from "@/views/MainLayout/ResultCheckVIew/ExtraOptions/ExtraOptions";
 import {ACTION_CREATE_RESULT_CHECK} from "@/store/result-check";
 import {mapActions} from "vuex";
 

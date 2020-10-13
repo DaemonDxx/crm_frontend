@@ -1,7 +1,6 @@
 <template>
   <v-container fluid class="fill-height pa-0" >
     <v-navigation-drawer
-
         v-model="drawer"
         app>
       <v-list-item
@@ -59,10 +58,14 @@
 <script>
 import {mapActions, mapGetters} from "vuex";
 import {mdiAccountCircle, mdiFormatListChecks, mdiMenuOpen, mdiPhone, mdiViewDashboardOutline, mdiCloudUploadOutline,} from '@mdi/js';
-import {ACTION_LOGOUT, ACTION_USER} from '../store/auth';
+import {ACTION_LOGOUT} from '../store/auth';
+import {UserActions} from "@/store/users";
 
 
 export default {
+
+  name: "MainLayout",
+
   data: () => {
     return {
       mdiAccountCircle,
@@ -103,22 +106,31 @@ export default {
       ]
     }
   },
+
   methods: {
-    ...mapActions([ACTION_LOGOUT, ACTION_USER]),
+    ...mapActions([ACTION_LOGOUT]),
+    ...mapActions([
+        UserActions.REQUEST_GET_ALL_USERS_IN_DEPARTMENT,
+        UserActions.REQUEST_GET_SELF_INFO
+    ]),
+
     to(path) {
       this.drawer = !this.drawer;
       this.$router.push(path);
     },
+
     logout() {
       this.ACTION_LOGOUT();
       this.$router.push('/auth/login');
     }
   },
+
   computed: {
     ...mapGetters([
         'user'
     ])
   },
+
   filters: {
     userFIO: function (value) {
       if (value.lastName) {
@@ -126,10 +138,12 @@ export default {
       }
     }
   },
+
   async created() {
-    await this.ACTION_USER();
+    await this[UserActions.REQUEST_GET_SELF_INFO]();
+    await this[UserActions.REQUEST_GET_ALL_USERS_IN_DEPARTMENT]();
   },
-  name: "MainLayout"
+
 }
 
 </script>

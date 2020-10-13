@@ -4,13 +4,13 @@ import LoginLayout from "@/layouts/LoginLayout";
 import Login from "@/views/LoginLayout/Login";
 import SignUp from "@/views/LoginLayout/SignUp";
 import MainLayout from "@/layouts/MainLayout";
-import Job from "@/views/MainLayout/Job";
+import Job from "@/views/MainLayout/TaskView/TaskView";
 import Dashboard from "@/views/MainLayout/Dashboard";
 
 import store from '../store'
 import Upload from "@/views/MainLayout/Upload";
 import NotifyJornal from "@/views/MainLayout/NotifyJornal";
-import ResultsCheck from "@/views/MainLayout/ResultCheck/ResultsCheck";
+import ResultsCheck from "@/views/MainLayout/ResultCheckVIew/ResultsCheck";
 
 Vue.use(VueRouter)
 

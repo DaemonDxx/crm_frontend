@@ -29,10 +29,10 @@
 </template>
 
 <script>
-import StealOptions from "@/views/MainLayout/ResultCheck/ExtraOptions/StealOptions";
-import DefaultOptions from "@/views/MainLayout/ResultCheck/ExtraOptions/DefaultOptions";
-import DontOptions from "@/views/MainLayout/ResultCheck/ExtraOptions/DontOptions";
-import NotFullOptions from "@/views/MainLayout/ResultCheck/ExtraOptions/notFullOptions";
+import StealOptions from "@/views/MainLayout/ResultCheckVIew/ExtraOptions/StealOptions";
+import DefaultOptions from "@/views/MainLayout/ResultCheckVIew/ExtraOptions/DefaultOptions";
+import DontOptions from "@/views/MainLayout/ResultCheckVIew/ExtraOptions/DontOptions";
+import NotFullOptions from "@/views/MainLayout/ResultCheckVIew/ExtraOptions/notFullOptions";
 export default {
   components: {NotFullOptions, DontOptions, DefaultOptions, StealOptions},
   props: ['point', 'typeResult'],
