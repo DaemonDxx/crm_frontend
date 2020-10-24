@@ -38,7 +38,7 @@
 import {mdiCalendar} from '@mdi/js';
 import * as moment from 'moment'
 import {mapActions, mapState} from "vuex";
-import {TaskViewActions} from "@/store/taskView";
+import {TaskViewActions} from "@/store/TaskView";
 
 export default {
   name: "DatePicker",

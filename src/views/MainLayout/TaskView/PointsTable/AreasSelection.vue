@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import {TaskViewActions} from "@/store/taskView";
+import {TaskViewActions} from "@/store/TaskView";
 import {mapActions, mapGetters} from "vuex";
 
 export default {

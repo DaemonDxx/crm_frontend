@@ -39,7 +39,7 @@
 
 <script>
 import {mapActions, mapGetters} from "vuex";
-import {TaskViewActions} from "@/store/taskView";
+import {TaskViewActions} from "@/store/TaskView";
 
 export default {
 name: "Members",

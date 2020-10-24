@@ -17,8 +17,8 @@
 
 <script>
 import PointResultCard from "@/views/MainLayout/ResultCheckVIew/PointResultCard";
-import {mapActions} from "vuex";
-import {ACTION_GET_TASK} from "@/store/Task";
+//import {mapActions} from "vuex";
+
 export default {
   name: "ResultsCheck",
   components: {PointResultCard},
@@ -30,11 +30,11 @@ export default {
     }
   },
   async mounted() {
-    const task = await this[ACTION_GET_TASK](this.date);
-    this.currentTask = task;
+    // const task = await this[ACTION_GET_TASK](this.date);
+    // this.currentTask = task;
   },
   methods: {
-    ...mapActions([ACTION_GET_TASK]),
+    // ...mapActions([ACTION_GET_TASK]),
     updatePoints: function ({point}) {
       this.currentTask.points = this.currentTask.points.filter(oldPoint => oldPoint._id !== point._id)
     }

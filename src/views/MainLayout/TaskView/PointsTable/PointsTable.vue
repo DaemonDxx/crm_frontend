@@ -16,13 +16,23 @@
     >
 
       <template style="colspan: all" v-slot:group.header="props">
-        <td bgcolor="#90CAF9" class="text-start" colspan="6">
+        <td bgcolor="#FFF673" class="text-start" colspan="7">
           <v-btn class="mr-3" icon @click="props.toggle()">
             <v-icon>
               {{icons.mdiMinus}}
             </v-icon>
           </v-btn>
           <span class="font-weight-bold">{{props.group}}</span>
+
+          <v-btn
+              class="ml-3"
+              small
+              outlined
+              color="primary"
+              @click="selectPointsHaveNotification(props.group)"
+          >
+            Отменить уведомленные точки
+          </v-btn>
         </td>
       </template>
 
@@ -31,6 +41,18 @@
           <v-btn icon @click="openNotificationDialog(props.item)">
             <v-icon  color="success" v-if="props.value">{{getIcon(props.value)}}</v-icon>
             <v-icon v-else>{{getIcon(props.value)}}</v-icon>
+          </v-btn>
+        </td>
+      </template>
+
+      <template v-slot:item._id="props">
+        <td>
+          <v-btn
+              color="warning"
+              x-small
+              @click="openTransferDialog(props.item)"
+          >
+            Перенос
           </v-btn>
         </td>
       </template>
@@ -45,9 +67,8 @@
 import PointTableHeader from "@/views/MainLayout/TaskView/PointsTable/PointTableHeader";
 import {mdiAt, mdiBellOff, mdiEmail, mdiMinus, mdiPhone} from "@mdi/js";
 import {mapActions, mapGetters, mapState} from "vuex";
-import {ACTION_GET_TASK} from "@/store/Task";
-import {ACTION_SHOW_DIALOG} from "@/store/notification";
-import {TaskViewActions} from "@/store/taskView";
+import {TaskViewActions} from "@/store/TaskView";
+import {NotificationModalActions} from "@/store/NotificationModal";
 export default {
 name: "PointsTable",
   components: {PointTableHeader},
@@ -68,15 +89,23 @@ name: "PointsTable",
         {text: 'Адрес', value: 'address', sortable: false},
         {text: 'Прибор', value: 'numberDevice', sortable: false},
         {text: 'Уведомление', value: 'notification', sortable: false, align: 'center'},
+        {text: 'Перенос', value: '_id', align: 'center'}
       ]
     }
   },
   methods: {
-    ...mapActions([ACTION_GET_TASK, ACTION_SHOW_DIALOG]),
-    ...mapActions("TaskViewStore", [TaskViewActions.UPDATE_PARAMS_REQUEST]),
+    ...mapActions("TaskViewStore", [
+        TaskViewActions.UPDATE_PARAMS_REQUEST,
+        TaskViewActions.SELECT_POINTS_HAVE_NOTIFICATION_IN_GROUP
+    ]),
+    ...mapActions("NotificationModalStore", [NotificationModalActions.SHOW]),
+
+    selectPointsHaveNotification(area) {
+      this[TaskViewActions.SELECT_POINTS_HAVE_NOTIFICATION_IN_GROUP](area);
+    },
 
     openNotificationDialog(point) {
-      this[ACTION_SHOW_DIALOG](point);
+      this[NotificationModalActions.SHOW](point);
     },
 
     getIcon: function (notify) {

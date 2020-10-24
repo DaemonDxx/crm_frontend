@@ -43,7 +43,7 @@
 import Members from "@/views/MainLayout/TaskView/TaskViewHeader/Members";
 import {mdiCogOutline, mdiTrashCanOutline} from "@mdi/js";
 import {mapActions, mapGetters} from "vuex";
-import {TaskViewActions} from "@/store/taskView";
+import {TaskViewActions} from "@/store/TaskView";
 export default {
 
 name: "TaskViewHeader",

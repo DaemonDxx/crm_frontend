@@ -2,12 +2,11 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import {Auth} from "@/store/auth";
 import {File} from "@/store/file";
-import {Notification} from "@/store/notification";
 import {AlarmSystem} from "@/store/alarmSystem";
-import {Task} from "@/store/Task";
 import {ResultCheck} from "@/store/result-check";
-import {TaskViewStore} from "@/store/taskView";
+import {TaskViewStore} from "@/store/TaskView";
 import {Users} from "@/store/users";
+import {NotificationModalStore} from "@/store/NotificationModal";
 
 Vue.use(Vuex)
 
@@ -18,10 +17,9 @@ export default  new Vuex.Store({
     Auth,
     File,
     AlarmSystem,
-    Notification,
-    Task,
     ResultCheck,
     TaskViewStore,
+    NotificationModalStore,
     Users
   }
 })
