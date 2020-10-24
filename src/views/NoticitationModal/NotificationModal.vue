@@ -86,10 +86,6 @@
         <v-card-actions
           class="pl-4 pr-4 pb-5"
         >
-         <nm-transfer-point>
-
-         </nm-transfer-point>
-
           <nm-delete-action
             :is-show-button="isHaveNotification"
           >
@@ -142,12 +138,11 @@ import NmDescriptionOptions from "@/views/NoticitationModal/nm-description-optio
 import NmHeadOptions from "@/views/NoticitationModal/nm-head-options";
 import NmDeleteAction from "@/views/NoticitationModal/ActionsButtonDialog/nm-delete-action";
 import {TaskViewActions} from "@/store/TaskView";
-import NmTransferPoint from "@/views/NoticitationModal/ActionsButtonDialog/nm-transfer-point";
+
 
 export default {
   name: "NotificationModal",
   components: {
-    NmTransferPoint,
     NmDeleteAction,
     NmHeadOptions,
     NmDescriptionOptions,
@@ -169,7 +164,7 @@ export default {
         NotificationModalActions.SAVE_NOTIFICATION,
     ]),
 
-    ...mapActions("TaskViewStore", [
+    ...mapActions("TaskViewStore",[
         TaskViewActions.UPDATE_NOTIFICATION_IN_POINTS
     ]),
 
@@ -180,8 +175,9 @@ export default {
     async saveNotify() {
       const haveNotError = this.$refs.form.validate();
       if (haveNotError) {
-        await this[NotificationModalActions.SAVE_NOTIFICATION]()
-        this[TaskViewActions.UPDATE_NOTIFICATION_IN_POINTS](this.notification);
+        const notify = await this[NotificationModalActions.SAVE_NOTIFICATION]();
+        console.log(notify);
+        this[TaskViewActions.UPDATE_NOTIFICATION_IN_POINTS](notify);
       }
     }
 

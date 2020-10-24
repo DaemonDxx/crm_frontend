@@ -48,6 +48,7 @@
       <template v-slot:item._id="props">
         <td>
           <v-btn
+              v-if="props.item.notification"
               color="warning"
               x-small
               @click="openTransferDialog(props.item)"
@@ -69,6 +70,7 @@ import {mdiAt, mdiBellOff, mdiEmail, mdiMinus, mdiPhone} from "@mdi/js";
 import {mapActions, mapGetters, mapState} from "vuex";
 import {TaskViewActions} from "@/store/TaskView";
 import {NotificationModalActions} from "@/store/NotificationModal";
+import {TransferDialogActions} from "@/store/TransferDialog";
 export default {
 name: "PointsTable",
   components: {PointTableHeader},
@@ -100,12 +102,19 @@ name: "PointsTable",
     ]),
     ...mapActions("NotificationModalStore", [NotificationModalActions.SHOW]),
 
+    ...mapActions("TransferDialog", [TransferDialogActions.SHOW]),
+
     selectPointsHaveNotification(area) {
       this[TaskViewActions.SELECT_POINTS_HAVE_NOTIFICATION_IN_GROUP](area);
     },
 
     openNotificationDialog(point) {
-      this[NotificationModalActions.SHOW](point);
+      this[NotificationModalActions.SHOW]({...point});
+    },
+
+    openTransferDialog(point) {
+      const oneNamePoints = this.points.filter(item => item.name === point.name);
+      this[TransferDialogActions.SHOW]({...oneNamePoints});
     },
 
     getIcon: function (notify) {
@@ -124,7 +133,8 @@ name: "PointsTable",
   computed: {
       ...mapGetters("TaskViewStore",["points"]),
       ...mapState("TaskViewStore", {
-        selectedPointsStore: state => state.selectedPoints
+        selectedPointsStore: state => state.selectedPoints,
+        pointOfDay: state => state.points
       }),
 
     selectedPoints: {

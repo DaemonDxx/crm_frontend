@@ -100,7 +100,7 @@ const TaskViewStore = {
         },
 
         async [TaskViewActions.UPDATE_NOTIFICATION_IN_POINTS] ({commit}, notification) {
-            commit(MUTATION_UPDATE_NOTIFICATION_IN_POINTS, notification);
+                commit(MUTATION_UPDATE_NOTIFICATION_IN_POINTS, notification);
         },
 
         [TaskViewActions.UPDATE_PARAMS_REQUEST] ({commit, dispatch}, param) {

@@ -12,6 +12,11 @@
     <NotificationModal>
     </NotificationModal>
 
+    <TransferDialog>
+
+    </TransferDialog>
+
+
   </v-container>
 </template>
 
@@ -22,11 +27,12 @@ import NotificationModal from "@/views/NoticitationModal/NotificationModal";
 import TaskViewHeader from "@/views/MainLayout/TaskView/TaskViewHeader/TaskViewHeader";
 import PointsTable from "@/views/MainLayout/TaskView/PointsTable/PointsTable";
 import {TaskViewActions} from "@/store/TaskView";
+import TransferDialog from "@/views/MainLayout/TaskView/TransferModal/TransferDialog";
 
 export default {
   name: "Job",
 
-  components: {PointsTable, TaskViewHeader, NotificationModal},
+  components: {TransferDialog, PointsTable, TaskViewHeader, NotificationModal},
 
   data: () => {
     return {}

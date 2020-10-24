@@ -1,5 +1,6 @@
 import {mapActions} from "vuex";
 import {NotificationModalActions} from "@/store/NotificationModal";
+import {TransferDialogActions} from "@/store/TransferDialog";
 
 
 export function GenerateMixin (module, keyFields) {
@@ -17,6 +18,7 @@ export function GenerateMixin (module, keyFields) {
 function getActionName(module) {
     switch (module) {
         case "NotificationModalStore": return NotificationModalActions.UPDATE_FIELD;
+        case "TransferDialog": return TransferDialogActions.UPDATE_FIELD;
     }
 }
 
@@ -61,6 +63,7 @@ function createGetter(keyField, module) {
 function getEntityNameByModuleName(module) {
     switch (module) {
         case "NotificationModalStore": return "notification";
+        case "TransferDialog": return "transferOption";
     }
 }
 

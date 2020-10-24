@@ -89,12 +89,14 @@ const NotificationModalStore = {
         },
 
         async [NotificationModalActions.SAVE_NOTIFICATION] ({dispatch, state}) {
+            let notify;
             if (!state.notification._id) {
-                dispatch(NotificationModalActions.REQUEST_CREATE_NOTIFICATION);
+                notify = await dispatch(NotificationModalActions.REQUEST_CREATE_NOTIFICATION);
             } else {
-                dispatch(NotificationModalActions.REQUEST_UPDATE_NOTIFICATION);
+                notify = await dispatch(NotificationModalActions.REQUEST_UPDATE_NOTIFICATION);
             }
             dispatch(NotificationModalActions.EDIT_NOTIFICATION, false);
+            return notify;
         },
 
         async [NotificationModalActions.REQUEST_CREATE_NOTIFICATION] ({commit, dispatch, state}) {
@@ -113,6 +115,7 @@ const NotificationModalStore = {
                 const response = await http.put('/notification', state.notification);
                 commit(MUTATION_SET_NOTIFICATION, response.data);
                 dispatch(NotificationModalActions.EDIT_NOTIFICATION, false);
+                return response.data;
             } catch ({message}) {
                 dispatch(ALARM_SYSTEM_ACTIONS.ACTION_REQUEST_ERROR, message, {root: true});
             }

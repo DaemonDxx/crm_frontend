@@ -7,6 +7,7 @@ import {ResultCheck} from "@/store/result-check";
 import {TaskViewStore} from "@/store/TaskView";
 import {Users} from "@/store/users";
 import {NotificationModalStore} from "@/store/NotificationModal";
+import {TransferDialog} from "@/store/TransferDialog";
 
 Vue.use(Vuex)
 
@@ -20,6 +21,7 @@ export default  new Vuex.Store({
     ResultCheck,
     TaskViewStore,
     NotificationModalStore,
-    Users
+    Users,
+    TransferDialog
   }
 })
