@@ -12,6 +12,7 @@
       >
         <nm-header
           :notification="notification"
+          @close-dialog="closeDialog"
         >
         </nm-header>
 
@@ -83,6 +84,12 @@
 
         </nm-description-options>
 
+        <files-links
+          :entity-i-d="notification._id"
+        >
+
+        </files-links>
+
         <v-card-actions
           class="pl-4 pr-4 pb-5"
         >
@@ -138,11 +145,13 @@ import NmDescriptionOptions from "@/views/NoticitationModal/nm-description-optio
 import NmHeadOptions from "@/views/NoticitationModal/nm-head-options";
 import NmDeleteAction from "@/views/NoticitationModal/ActionsButtonDialog/nm-delete-action";
 import {TaskViewActions} from "@/store/TaskView";
+import FilesLinks from "@/views/FilesLinks/FilesLinks";
 
 
 export default {
   name: "NotificationModal",
   components: {
+    FilesLinks,
     NmDeleteAction,
     NmHeadOptions,
     NmDescriptionOptions,
@@ -160,13 +169,19 @@ export default {
   methods: {
 
     ...mapActions("NotificationModalStore", [
-       NotificationModalActions.EDIT_NOTIFICATION,
+        NotificationModalActions.EDIT_NOTIFICATION,
         NotificationModalActions.SAVE_NOTIFICATION,
+        NotificationModalActions.HIDE
     ]),
 
     ...mapActions("TaskViewStore",[
         TaskViewActions.UPDATE_NOTIFICATION_IN_POINTS
     ]),
+
+    closeDialog: function () {
+      this.$refs.form.reset()
+      this[NotificationModalActions.HIDE]();
+    },
 
     canEdit: function () {
       this[NotificationModalActions.EDIT_NOTIFICATION](true);
@@ -176,7 +191,6 @@ export default {
       const haveNotError = this.$refs.form.validate();
       if (haveNotError) {
         const notify = await this[NotificationModalActions.SAVE_NOTIFICATION]();
-        console.log(notify);
         this[TaskViewActions.UPDATE_NOTIFICATION_IN_POINTS](notify);
       }
     }

@@ -33,7 +33,9 @@
 
     <v-app-bar
         color="primary"
-        app>
+        app
+        dense
+    >
     <v-btn
         @click="drawer=!drawer" icon>
       <v-icon>{{mdiMenuOpen}}</v-icon>

@@ -74,12 +74,10 @@ export default {
     ...mapActions("NotificationModalStore", [
         NotificationModalActions.UPDATE_FIELD,
         NotificationModalActions.REQUEST_GET_NUMBER,
-        NotificationModalActions.HIDE
     ]),
 
     closeDialog() {
-      this.error = [];
-      this[NotificationModalActions.HIDE]();
+      this.$emit('close-dialog');
     },
 
     getNumber: async function () {

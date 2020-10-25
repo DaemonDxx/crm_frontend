@@ -76,10 +76,10 @@ const NotificationModalStore = {
             try {
                 const res = await http('/point', {
                     params: {
-                        name: point.name
+                        contract: point.numberContract
                     }
                 });
-                const haveNotNotifyPoints = res.data.points.filter(item => !item.notification);
+                const haveNotNotifyPoints = res.data.filter(item => !item.notification);
                 commit(MUTATION_SET_ONE_NAME_POINTS, haveNotNotifyPoints);
                 commit(MUTATION_EDITABLE_NOTIFICATION, true);
             } catch ({message}) {
@@ -147,6 +147,7 @@ const NotificationModalStore = {
 
         [NotificationModalActions.HIDE] ({commit}) {
             commit(MUTATION_VISIBLE_DIALOG, false);
+            commit(MUTATION_EDITABLE_NOTIFICATION, true);
             commit(MUTATION_RESET_NOTIFICATION);
         }
     },
