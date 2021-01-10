@@ -41,7 +41,7 @@ const TaskViewStore = {
     actions: {
         async [TaskViewActions.REQUEST_GET_POINTS_BY_DATE] ({commit, dispatch, state}) {
             try {
-                const res = await http("/point/day", {params: {date: state.date}});
+                const res = await http("/points/day", {params: {date: state.date}});
                 if (res.status === 200) {
                     commit(MUTATION_UPDATE_POINTS, res.data);
                 }

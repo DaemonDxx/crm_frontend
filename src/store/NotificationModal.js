@@ -74,9 +74,10 @@ const NotificationModalStore = {
         async [NotificationModalActions.REQUEST_GET_ONE_NAME_POINTS] ({commit, dispatch}, point) {
             dispatch(ALARM_SYSTEM_ACTIONS.ACTION_SEND_REQUEST, null, {root: true});
             try {
-                const res = await http('/point', {
+                const res = await http('/points', {
                     params: {
-                        contract: point.numberContract
+                        contract: point.numberContract,
+                        date: point.dateCheck
                     }
                 });
                 const haveNotNotifyPoints = res.data.filter(item => !item.notification);
